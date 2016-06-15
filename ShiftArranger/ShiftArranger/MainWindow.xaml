@@ -6,30 +6,32 @@
         xmlns:local="clr-namespace:ShiftArranger"
         mc:Ignorable="d"
         Title="MainWindow" Height="515.789" Width="1200">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
+        <StackPanel Grid.Row="0" ScrollViewer.VerticalScrollBarVisibility="Disabled">
             <TextBlock>Doctors</TextBlock>
-            <ListView x:Name="DoctorListView" ItemsSource="{Binding DoctorList}">
+            <ListView x:Name="DoctorListView"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" >
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="ID" DisplayMemberBinding="{Binding ID}"/>
-                        <GridViewColumn Header="Type"/>
-                        <GridViewColumn Header="Main Ward"/>
-                        <GridViewColumn Header="Available Ward"/>
-                        <GridViewColumn Header="Want"/>
-                        <GridViewColumn Header="Avoid"/>
-                        <GridViewColumn Header="Relative Want"/>
-                        <GridViewColumn Header="Relative Avoid"/>
+                        <GridViewColumn Header="Type"  DisplayMemberBinding="{Binding doctorType}"/>
+                        <GridViewColumn Header="Main Ward"  DisplayMemberBinding="{Binding mainWard}"/>
+                        <GridViewColumn Header="Available Ward"  DisplayMemberBinding="{Binding capableOf}"/>
+                        <GridViewColumn Header="Want"  DisplayMemberBinding="{Binding absoluteWantThisDay}"/>
+                        <GridViewColumn Header="Avoid"  DisplayMemberBinding="{Binding absoluteAvoidThisDay}"/>
+                        <GridViewColumn Header="Relative Want"  DisplayMemberBinding="{Binding relativeWantThisDay}"/>
+                        <GridViewColumn Header="Relative Avoid"  DisplayMemberBinding="{Binding relativeAvoidThisDay}"/>
                     </GridView>
                 </ListView.View>
             </ListView>
         </StackPanel>
         <StackPanel Grid.Row="1">
-            <Button Click="Button_Click" >Do</Button>
+            <Button Click="Button_Click" Content="Do" />
         </StackPanel>
     </Grid>
 </Window>

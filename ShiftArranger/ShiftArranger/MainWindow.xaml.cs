@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,16 +26,18 @@ namespace ShiftArranger
         public MainWindow()
         {
             InitializeComponent();
+
             mainLogic = new MainLogic();
             viewModel = new ViewModel(mainLogic);
-            DataContext = viewModel;
+           
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var SA = new MainLogic();
-            SA.arrange();
-            DoctorListView.View.
+            mainLogic.arrange();
+            viewModel.refreshDoctorList();
+            DoctorListView.ItemsSource = viewModel.doctorList;
         }
+        
     }
 }

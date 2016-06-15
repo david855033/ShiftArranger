@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="staticClass.cs" />
     <Compile Include="TotalDutyDayAnalyzer.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">
