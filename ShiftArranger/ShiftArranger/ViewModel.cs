@@ -39,6 +39,20 @@ namespace ShiftArranger
             OnPropertyChanged(nameof(doctorList));
         }
 
+        public ObservableCollection<classDateInformationView> dateList;
+        public void refreshDutyDay()
+        {
+            dateList = new ObservableCollection<classDateInformationView>();
+            var toAdd = new classDateInformationView();
+            toAdd.ward = "TEST";
+            for (int i = 0; i < toAdd.date.Length; i++)
+            {
+                toAdd.date[i] = "T";
+            }
+            dateList.Add(toAdd);
+            OnPropertyChanged(nameof(dateList));
+        }
+
         //Property Change Behavior
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
@@ -48,6 +62,7 @@ namespace ShiftArranger
                 handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+
 
     public class DoctorInformationView
     {
@@ -59,7 +74,18 @@ namespace ShiftArranger
         public string mainWard { get; set; }
         public string capableOf { get; set; }
         public string doctorType { get; set; }
+        public string totalDuty { get; set; }
+        public string holidayDuty { get; set; }
+        public string nonHolidayDuty { get; set; }
+        public string totalWorkHour { get; set; }
     }
-
-
+    public class classDateInformationView
+    {
+        public string ward { get; set; }
+        public string[] date { get; set; }
+        public classDateInformationView()
+        {
+            date = new string[31];
+        }
+    }
 }

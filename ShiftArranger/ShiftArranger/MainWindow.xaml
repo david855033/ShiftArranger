@@ -5,33 +5,159 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShiftArranger"
         mc:Ignorable="d"
-        Title="MainWindow" Height="515.789" Width="1200">
-
+        Title="MainWindow" Height="800" Width="1500" Top="0" Left="0">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="370"/>
+            <RowDefinition Height="180"/>
+            <RowDefinition Height="200"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" ScrollViewer.VerticalScrollBarVisibility="Disabled">
-            <TextBlock>Doctors</TextBlock>
-            <ListView x:Name="DoctorListView"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" >
+        <DockPanel  Grid.Row="0">
+            <StackPanel>
+                <TextBlock>Doctors</TextBlock>
+                <ListView x:Name="DoctorListView" Height="350" Width="1300"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="80" Header="ID" DisplayMemberBinding="{Binding ID}"/>
+                            <GridViewColumn Width="70" Header="Type"  DisplayMemberBinding="{Binding doctorType}"/>
+                            <GridViewColumn Width="80" Header="Main Ward"  DisplayMemberBinding="{Binding mainWard}"/>
+                            <GridViewColumn Width="200" Header="Available Ward"  DisplayMemberBinding="{Binding capableOf}"/>
+                            <GridViewColumn Width="150" Header="Want"  DisplayMemberBinding="{Binding absoluteWantThisDay}"/>
+                            <GridViewColumn Width="150" Header="Avoid"  DisplayMemberBinding="{Binding absoluteAvoidThisDay}"/>
+                            <GridViewColumn Width="150" Header="Relative Want"  DisplayMemberBinding="{Binding relativeWantThisDay}"/>
+                            <GridViewColumn Width="150" Header="Relative Avoid"  DisplayMemberBinding="{Binding relativeAvoidThisDay}"/>
+                            <GridViewColumn Width="50" Header="值班"  DisplayMemberBinding="{Binding totalDuty}"/>
+                            <GridViewColumn Width="50" Header="平日"  DisplayMemberBinding="{Binding nonHolidayDuty}"/>
+                            <GridViewColumn Width="50" Header="假日"  DisplayMemberBinding="{Binding holidayDuty}"/>
+                            <GridViewColumn Width="50" Header="周工時"  DisplayMemberBinding="{Binding totalWorkHour}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center">
+                <Button Click="Button_Click" Margin="0,10" Width="100" Content="Inititalize Doctors" />
+                <Button Click="Button_AssignDuty" Margin="0,10" Width="100" Content="Assign Duty" />
+            </StackPanel>
+        </DockPanel>
+        <DockPanel Grid.Row="1">
+            
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <Border BorderBrush="Black" BorderThickness="2" Margin="3">
+                        <TextBlock TextAlignment="Center" Width="65">設定本月日數</TextBlock>
+                    </Border>
+                    <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
+                        <TextBox TextAlignment="Center"  Width="40"></TextBox>
+                    </Border>
+                    <Border BorderBrush="Black" BorderThickness="2" Margin="3">
+                        <TextBlock TextAlignment="Center" Width="65">設定假日</TextBlock>
+                    </Border>
+                    <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
+                        <TextBox TextAlignment="Center"  Width="200"></TextBox>
+                    </Border>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Border BorderBrush="Black" BorderThickness="2" Margin="3">
+                        <TextBlock TextAlignment="Center" Width="65">假日數</TextBlock>
+                    </Border>
+                    <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
+                        <TextBlock TextAlignment="Center"  Width="65">0</TextBlock>
+                    </Border>
+                    <Border BorderBrush="Black" BorderThickness="2" Margin="3">
+                        <TextBlock TextAlignment="Center" Width="65">假日班數</TextBlock>
+                    </Border>
+                    <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
+                        <TextBlock TextAlignment="Center"  Width="65">0</TextBlock>
+                    </Border>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal">
+                    <Border BorderBrush="Black" BorderThickness="2" Margin="3">
+                        <TextBlock TextAlignment="Center" Width="65">平日數</TextBlock>
+                    </Border>
+                    <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
+                        <TextBlock TextAlignment="Center"  Width="65">0</TextBlock>
+                    </Border>
+                    <Border BorderBrush="Black" BorderThickness="2" Margin="3">
+                        <TextBlock TextAlignment="Center" Width="65">平日班數</TextBlock>
+                    </Border>
+                    <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
+                        <TextBlock TextAlignment="Center"  Width="65">0</TextBlock>
+                    </Border>
+                </StackPanel>
+               
+            </StackPanel>
+            <StackPanel>
+                <ListView Width="400" Height="100">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="病房" Width="80"/>
+                            <GridViewColumn Header="假日班人次" Width="80"/>
+                            <GridViewColumn Header="平日班人次" Width="80"/>
+                            <GridViewColumn Header="可分配人力" Width="100"/>
+                            
+                        </GridView>
+                    </ListView.View>
+                </ListView> 
+            </StackPanel>
+            <ListView x:Name="totalDutyDayView" Width="500" Height="150">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="ID" DisplayMemberBinding="{Binding ID}"/>
-                        <GridViewColumn Header="Type"  DisplayMemberBinding="{Binding doctorType}"/>
-                        <GridViewColumn Header="Main Ward"  DisplayMemberBinding="{Binding mainWard}"/>
-                        <GridViewColumn Header="Available Ward"  DisplayMemberBinding="{Binding capableOf}"/>
-                        <GridViewColumn Header="Want"  DisplayMemberBinding="{Binding absoluteWantThisDay}"/>
-                        <GridViewColumn Header="Avoid"  DisplayMemberBinding="{Binding absoluteAvoidThisDay}"/>
-                        <GridViewColumn Header="Relative Want"  DisplayMemberBinding="{Binding relativeWantThisDay}"/>
-                        <GridViewColumn Header="Relative Avoid"  DisplayMemberBinding="{Binding relativeAvoidThisDay}"/>
+                        <GridViewColumn Header="醫師職等" Width="80"/>
+                        <GridViewColumn Header="總人數" Width="60"/>
+                        <GridViewColumn Header="平日班" Width="60"/>
+                        <GridViewColumn Header="假日班" Width="60"/>
+                        <GridViewColumn Header="總假日班人次" Width="100"/>
+                        <GridViewColumn Header="總平日班人次" Width="100"/>
                     </GridView>
                 </ListView.View>
             </ListView>
-        </StackPanel>
-        <StackPanel Grid.Row="1">
-            <Button Click="Button_Click" Content="Do" />
+        </DockPanel>
+        <StackPanel Grid.Row="2">
+            <DockPanel>
+                <ListView x:Name="dateListView" Width="1300" Height="200">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="80" Header="Ward" DisplayMemberBinding="{Binding ward}"/>
+                            <GridViewColumn Width="35" Header="1"  DisplayMemberBinding="{Binding date[0]}"/>
+                            <GridViewColumn Width="35" Header="2"  DisplayMemberBinding="{Binding date[1]}"/>
+                            <GridViewColumn Width="35" Header="3"  DisplayMemberBinding="{Binding date[2]}"/>
+                            <GridViewColumn Width="35" Header="4"  DisplayMemberBinding="{Binding date[3]}"/>
+                            <GridViewColumn Width="35" Header="5"  DisplayMemberBinding="{Binding date[4]}"/>
+                            <GridViewColumn Width="35" Header="6"  DisplayMemberBinding="{Binding date[5]}"/>
+                            <GridViewColumn Width="35" Header="7"  DisplayMemberBinding="{Binding date[6]}"/>
+                            <GridViewColumn Width="35" Header="8"  DisplayMemberBinding="{Binding date[7]}"/>
+                            <GridViewColumn Width="35" Header="9"  DisplayMemberBinding="{Binding date[8]}"/>
+                            <GridViewColumn Width="35" Header="10"  DisplayMemberBinding="{Binding date[9]}"/>
+                            <GridViewColumn Width="35" Header="11"  DisplayMemberBinding="{Binding date[10]}"/>
+                            <GridViewColumn Width="35" Header="12"  DisplayMemberBinding="{Binding date[11]}"/>
+                            <GridViewColumn Width="35" Header="13"  DisplayMemberBinding="{Binding date[12]}"/>
+                            <GridViewColumn Width="35" Header="14"  DisplayMemberBinding="{Binding date[13]}"/>
+                            <GridViewColumn Width="35" Header="15"  DisplayMemberBinding="{Binding date[14]}"/>
+                            <GridViewColumn Width="35" Header="16"  DisplayMemberBinding="{Binding date[15]}"/>
+                            <GridViewColumn Width="35" Header="17"  DisplayMemberBinding="{Binding date[16]}"/>
+                            <GridViewColumn Width="35" Header="18"  DisplayMemberBinding="{Binding date[17]}"/>
+                            <GridViewColumn Width="35" Header="19"  DisplayMemberBinding="{Binding date[18]}"/>
+                            <GridViewColumn Width="35" Header="20"  DisplayMemberBinding="{Binding date[19]}"/>
+                            <GridViewColumn Width="35" Header="21"  DisplayMemberBinding="{Binding date[20]}"/>
+                            <GridViewColumn Width="35" Header="22"  DisplayMemberBinding="{Binding date[21]}"/>
+                            <GridViewColumn Width="35" Header="23"  DisplayMemberBinding="{Binding date[22]}"/>
+                            <GridViewColumn Width="35" Header="24"  DisplayMemberBinding="{Binding date[23]}"/>
+                            <GridViewColumn Width="35" Header="25"  DisplayMemberBinding="{Binding date[24]}"/>
+                            <GridViewColumn Width="35" Header="26"  DisplayMemberBinding="{Binding date[25]}"/>
+                            <GridViewColumn Width="35" Header="27"  DisplayMemberBinding="{Binding date[26]}"/>
+                            <GridViewColumn Width="35" Header="28"  DisplayMemberBinding="{Binding date[27]}"/>
+                            <GridViewColumn Width="35" Header="29"  DisplayMemberBinding="{Binding date[28]}"/>
+                            <GridViewColumn Width="35" Header="30"  DisplayMemberBinding="{Binding date[29]}"/>
+                            <GridViewColumn Width="35" Header="31"  DisplayMemberBinding="{Binding date[30]}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <StackPanel Orientation="Vertical">
+                    <Button Click="Button_Click" Margin="0,10" Width="100" Content="Inititalize WorkDay" />
+                </StackPanel>
+            </DockPanel>
         </StackPanel>
     </Grid>
 </Window>

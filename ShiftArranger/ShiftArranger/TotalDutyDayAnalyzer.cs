@@ -15,18 +15,35 @@ namespace ShiftArranger
         Dictionary<DoctorType, int> DoctorCountByType;
         DayCount totalDayCount;
         Dictionary<DoctorType, List<Doctor_DayCount>> doctorDayCountByType;
+        List<Doctor_DayCount> doctor_DayCountList = new List<Doctor_DayCount>();
         public TotalDutyDayAnalyzer(IEnumerable<DateInformation> dateList, IEnumerable<DoctorInformation> doctorList)
         {
             this.dateList = dateList;
             this.doctorList = doctorList;
         }
-        public void Do()
+
+        public List<Doctor_DayCount> getDoctor_DayCountList()
         {
             sumUpDay();
             checkDoctorCountByType();
             sortDoctorByType();
             splitDaysIntoDoctors();
+            makeDoctor_DayCountList();
+            return doctor_DayCountList;
         }
+        
+        public  void makeDoctor_DayCountList()
+        {
+            doctor_DayCountList = new List<Doctor_DayCount>();
+            foreach (var type in sortTypelist)
+            {
+                foreach (var d in doctorDayCountByType[type])
+                {
+                    doctor_DayCountList.Add(d);
+                }
+            }
+        }
+
         void sumUpDay()
         {
             totalDayCount = new DayCount();

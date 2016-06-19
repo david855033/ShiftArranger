@@ -38,6 +38,11 @@ namespace ShiftArranger
             viewModel.refreshDoctorList();
             DoctorListView.ItemsSource = viewModel.doctorList;
         }
-        
+
+        private void Button_AssignDuty(object sender, RoutedEventArgs e)
+        {
+            dateListView.ItemsSource = viewModel.dateList;
+            viewModel.refreshDutyDay();
+        }
     }
 }
