@@ -10,6 +10,16 @@ namespace ShiftArranger
 {
     public class ViewModel : INotifyPropertyChanged
     {
+        #region Property Change Behavior
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
+
         MainLogic mainLogic;
         public ViewModel(MainLogic mainLogic)
         {
@@ -53,17 +63,53 @@ namespace ShiftArranger
             OnPropertyChanged(nameof(dateList));
         }
 
-        //Property Change Behavior
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
+        public ObservableCollection<WardShiftView> WardShiftList;
+        public void refreshWardShiftList()
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(propertyName));
+            WardShiftList = new ObservableCollection<WardShiftView>();
+            WardShiftView NICU = new WardShiftView()
+            {
+                ward = "NICU",
+                holidayShift = "5",
+                nonHolidayShift = "10",
+                availableDoctor = "10"
+            };
+            WardShiftList.Add(NICU);
+            OnPropertyChanged(nameof(WardShiftList));
+        }
+
+        public ObservableCollection<RankShiftSummaryView> RankShiftSummaryList;
+        public void refreshRankShiftSummaryList()
+        {
+            RankShiftSummaryList = new ObservableCollection<RankShiftSummaryView>();
+            RankShiftSummaryView R3 = new RankShiftSummaryView()
+            {
+                doctorRank = "R3",
+                holidayShiftPerPerson = "1",
+                nonHolidayShiftPerPerson = "2",
+                doctorCount = "4"
+            };
+            RankShiftSummaryList.Add(R3);
+            OnPropertyChanged(nameof(RankShiftSummaryList));
         }
     }
 
-
+    public class RankShiftSummaryView
+    {
+        public string doctorRank { get; set; }
+        public string doctorCount { get; set; }
+        public string nonHolidayShiftPerPerson { get; set; }
+        public string holidayShiftPerPerson { get; set; }
+        public string totalNonHolidayShift { get; set; }
+        public string totalHolidayShift { get; set; }
+    }
+    public class WardShiftView
+    {
+        public string ward { get; set; }
+        public string holidayShift { get; set; }
+        public string nonHolidayShift { get; set; }
+        public string availableDoctor { get; set; }
+    }
     public class DoctorInformationView
     {
         public string ID { get; set; }

@@ -15,25 +15,23 @@
         <DockPanel  Grid.Row="0">
             <StackPanel>
                 <TextBlock>Doctors</TextBlock>
-                <ListView x:Name="DoctorListView" Height="350" Width="1300"
-                ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" >
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Width="80" Header="ID" DisplayMemberBinding="{Binding ID}"/>
-                            <GridViewColumn Width="70" Header="Type"  DisplayMemberBinding="{Binding doctorType}"/>
-                            <GridViewColumn Width="80" Header="Main Ward"  DisplayMemberBinding="{Binding mainWard}"/>
-                            <GridViewColumn Width="200" Header="Available Ward"  DisplayMemberBinding="{Binding capableOf}"/>
-                            <GridViewColumn Width="150" Header="Want"  DisplayMemberBinding="{Binding absoluteWantThisDay}"/>
-                            <GridViewColumn Width="150" Header="Avoid"  DisplayMemberBinding="{Binding absoluteAvoidThisDay}"/>
-                            <GridViewColumn Width="150" Header="Relative Want"  DisplayMemberBinding="{Binding relativeWantThisDay}"/>
-                            <GridViewColumn Width="150" Header="Relative Avoid"  DisplayMemberBinding="{Binding relativeAvoidThisDay}"/>
-                            <GridViewColumn Width="50" Header="值班"  DisplayMemberBinding="{Binding totalDuty}"/>
-                            <GridViewColumn Width="50" Header="平日"  DisplayMemberBinding="{Binding nonHolidayDuty}"/>
-                            <GridViewColumn Width="50" Header="假日"  DisplayMemberBinding="{Binding holidayDuty}"/>
-                            <GridViewColumn Width="50" Header="周工時"  DisplayMemberBinding="{Binding totalWorkHour}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                <DataGrid x:Name="DoctorListView" Height="350" Width="1300"  AutoGenerateColumns="False"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn  Width="80" Header="ID" Binding="{Binding ID}"/>
+                        <DataGridTextColumn  Width="70" Header="Type"  Binding="{Binding doctorType}"/>
+                        <DataGridTextColumn  Width="80" Header="Main Ward"  Binding="{Binding mainWard}"/>
+                        <DataGridTextColumn  Width="200" Header="Available Ward"  Binding="{Binding capableOf}"/>
+                        <DataGridTextColumn  Width="50" Header="總班"  Binding="{Binding totalDuty}"/>
+                        <DataGridTextColumn  Width="50" Header="平日班"  Binding="{Binding nonHolidayDuty}"/>
+                        <DataGridTextColumn  Width="50" Header="假日班"  Binding="{Binding holidayDuty}"/>
+                        <DataGridTextColumn  Width="50" Header="周工時"  Binding="{Binding totalWorkHour}"/>
+                        <DataGridTextColumn  Width="150" Header="Want"  Binding="{Binding absoluteWantThisDay}"/>
+                        <DataGridTextColumn  Width="150" Header="Avoid"  Binding="{Binding absoluteAvoidThisDay}"/>
+                        <DataGridTextColumn  Width="150" Header="Relative Want"  Binding="{Binding relativeWantThisDay}"/>
+                        <DataGridTextColumn  Width="150" Header="Relative Avoid"  Binding="{Binding relativeAvoidThisDay}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
             </StackPanel>
             <StackPanel VerticalAlignment="Center">
                 <Button Click="Button_Click" Margin="0,10" Width="100" Content="Inititalize Doctors" />
@@ -41,15 +39,37 @@
             </StackPanel>
         </DockPanel>
         <DockPanel Grid.Row="1">
-            
+            <StackPanel  Width="500">
+                <ListView x:Name="RankShiftSummaryViewList" Width="500" Height="150">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="醫師職等" Width="80"  DisplayMemberBinding="{Binding doctorRank}"/>
+                            <GridViewColumn Header="人數" Width="60"  DisplayMemberBinding="{Binding doctorCount}"/>
+                            <GridViewColumn Header="平日班/人" Width="60" DisplayMemberBinding="{Binding nonHolidayShiftPerPerson}"/>
+                            <GridViewColumn Header="假日班/人" Width="60" DisplayMemberBinding="{Binding holidayShiftPerPerson}"/>
+                            <GridViewColumn Header="總假日班人次" Width="100" DisplayMemberBinding="{Binding totalNonHolidayShift}"/>
+                            <GridViewColumn Header="總平日班人次" Width="100" DisplayMemberBinding="{Binding totalHolidayShift}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <Button Content="refresh" Click="Button_Click_2"/>
+            </StackPanel>
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
                     <Border BorderBrush="Black" BorderThickness="2" Margin="3">
-                        <TextBlock TextAlignment="Center" Width="65">設定本月日數</TextBlock>
+                        <TextBlock TextAlignment="Center" Width="100">設定本月日數</TextBlock>
                     </Border>
                     <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
                         <TextBox TextAlignment="Center"  Width="40"></TextBox>
                     </Border>
+                    <Border BorderBrush="Black" BorderThickness="2" Margin="3">
+                        <TextBlock TextAlignment="Center" Width="100">本月一日為星期</TextBlock>
+                    </Border>
+                    <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
+                        <TextBox TextAlignment="Center"  Width="40"></TextBox>
+                    </Border>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
                     <Border BorderBrush="Black" BorderThickness="2" Margin="3">
                         <TextBlock TextAlignment="Center" Width="65">設定假日</TextBlock>
                     </Border>
@@ -57,62 +77,55 @@
                         <TextBox TextAlignment="Center"  Width="200"></TextBox>
                     </Border>
                 </StackPanel>
+                <Button> CALCULATE </Button>
                 <StackPanel Orientation="Horizontal">
                     <Border BorderBrush="Black" BorderThickness="2" Margin="3">
                         <TextBlock TextAlignment="Center" Width="65">假日數</TextBlock>
                     </Border>
-                    <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
+                    <Border BorderBrush="Green" BorderThickness="2"  Margin="3">
                         <TextBlock TextAlignment="Center"  Width="65">0</TextBlock>
                     </Border>
                     <Border BorderBrush="Black" BorderThickness="2" Margin="3">
                         <TextBlock TextAlignment="Center" Width="65">假日班數</TextBlock>
                     </Border>
-                    <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
+                    <Border BorderBrush="Green" BorderThickness="2"  Margin="3">
                         <TextBlock TextAlignment="Center"  Width="65">0</TextBlock>
                     </Border>
                 </StackPanel>
-                
+
                 <StackPanel Orientation="Horizontal">
                     <Border BorderBrush="Black" BorderThickness="2" Margin="3">
                         <TextBlock TextAlignment="Center" Width="65">平日數</TextBlock>
                     </Border>
-                    <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
+                    <Border BorderBrush="Green" BorderThickness="2"  Margin="3">
                         <TextBlock TextAlignment="Center"  Width="65">0</TextBlock>
                     </Border>
                     <Border BorderBrush="Black" BorderThickness="2" Margin="3">
                         <TextBlock TextAlignment="Center" Width="65">平日班數</TextBlock>
                     </Border>
-                    <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
+                    <Border BorderBrush="Green" BorderThickness="2"  Margin="3">
                         <TextBlock TextAlignment="Center"  Width="65">0</TextBlock>
                     </Border>
                 </StackPanel>
-               
+
             </StackPanel>
             <StackPanel>
-                <ListView Width="400" Height="100">
+                <ListView Width="400" Height="100" x:Name="WardShiftListView">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="病房" Width="80"/>
-                            <GridViewColumn Header="假日班人次" Width="80"/>
-                            <GridViewColumn Header="平日班人次" Width="80"/>
-                            <GridViewColumn Header="可分配人力" Width="100"/>
-                            
+                            <GridViewColumn Header="病房" Width="80" DisplayMemberBinding="{Binding ward}"/>
+                            <GridViewColumn Header="假日班人次" Width="80" DisplayMemberBinding="{Binding holidayShift}"/>
+                            <GridViewColumn Header="平日班人次" Width="80" DisplayMemberBinding="{Binding nonHolidayShift}"/>
+                            <GridViewColumn Header="可分配人力" Width="100" DisplayMemberBinding="{Binding availableDoctor}"/>
+
                         </GridView>
                     </ListView.View>
-                </ListView> 
+                </ListView>
+                <Button Click="Button_Click_1">refresh</Button>
             </StackPanel>
-            <ListView x:Name="totalDutyDayView" Width="500" Height="150">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="醫師職等" Width="80"/>
-                        <GridViewColumn Header="總人數" Width="60"/>
-                        <GridViewColumn Header="平日班" Width="60"/>
-                        <GridViewColumn Header="假日班" Width="60"/>
-                        <GridViewColumn Header="總假日班人次" Width="100"/>
-                        <GridViewColumn Header="總平日班人次" Width="100"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+
+            <StackPanel>
+            </StackPanel>
         </DockPanel>
         <StackPanel Grid.Row="2">
             <DockPanel>

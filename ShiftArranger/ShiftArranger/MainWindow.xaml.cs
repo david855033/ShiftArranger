@@ -41,8 +41,20 @@ namespace ShiftArranger
 
         private void Button_AssignDuty(object sender, RoutedEventArgs e)
         {
-            dateListView.ItemsSource = viewModel.dateList;
             viewModel.refreshDutyDay();
+            dateListView.ItemsSource = viewModel.dateList;
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            viewModel.refreshWardShiftList();
+            WardShiftListView.ItemsSource = viewModel.WardShiftList;
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            viewModel.refreshRankShiftSummaryList();
+            RankShiftSummaryViewList.ItemsSource = viewModel.RankShiftSummaryList;
         }
     }
 }

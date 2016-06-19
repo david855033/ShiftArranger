@@ -42,6 +42,14 @@ namespace ShiftArranger
         public IEnumerable<WardType> capableOf;
         public DoctorType doctorType;
     }
+    public class WardShiftInformation
+    {
+        public WardType ward;
+        public int holidayShift;
+        public int nonHolidayShift;
+        public int availableDoctor;
+    }
+    
     public enum WardType
     {
         NICU, PICU, A093, A091, NBR
