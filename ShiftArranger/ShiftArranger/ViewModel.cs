@@ -26,7 +26,12 @@ namespace ShiftArranger
             this.mainLogic = mainLogic;
         }
 
-        public ObservableCollection<DoctorInformationView> doctorList;
+        private ObservableCollection<DoctorInformationView> _doctorList;
+        public ObservableCollection<DoctorInformationView> doctorList
+        {
+            get{ return _doctorList; }
+            set { _doctorList = value; OnPropertyChanged(nameof(doctorList)); }
+        }
         public void refreshDoctorList()
         {
             doctorList = new ObservableCollection<DoctorInformationView>();
@@ -36,6 +41,7 @@ namespace ShiftArranger
                    new DoctorInformationView()
                    {
                        ID = d.ID,
+                       name = d.name,
                        absoluteAvoidThisDay = d.absoluteAvoidThisDay.getStringFromList(),
                        absoluteWantThisDay = d.absoluteWantThisDay.getStringFromList(),
                        relativeAvoidThisDay = d.relativeAvoidThisDay.getStringFromList(),
@@ -113,6 +119,7 @@ namespace ShiftArranger
     public class DoctorInformationView
     {
         public string ID { get; set; }
+        public string name { get; set; }
         public string absoluteAvoidThisDay { get; set; }
         public string absoluteWantThisDay { get; set; }
         public string relativeAvoidThisDay { get; set; }

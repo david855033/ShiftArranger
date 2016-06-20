@@ -11,6 +11,10 @@ namespace ShiftArranger
         public IEnumerable<DateInformation> dateList = new List<DateInformation>();
         public IEnumerable<DoctorInformation> doctorList = new List<DoctorInformation>();
         public IEnumerable<Doctor_DayCount> doctor_DayCountList = new List<Doctor_DayCount>();
+        public int daysInThisMonths, weekDayOfTheFirstDay;
+        public IEnumerable<int> Holidays= new List<int>();
+        
+
         public void arrange()
         {
             var dateListFactory = new DateListFactory(31, new int[] { 2, 3, 9, 10, 16, 17, 23, 24, 30, 31 }, WardSets.allWards);
@@ -34,6 +38,7 @@ namespace ShiftArranger
     public class DoctorInformation
     {
         public string ID;
+        public string name;
         public IEnumerable<int> absoluteAvoidThisDay;
         public IEnumerable<int> absoluteWantThisDay;
         public IEnumerable<int> relativeAvoidThisDay;

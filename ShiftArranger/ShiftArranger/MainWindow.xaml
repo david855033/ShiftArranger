@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:ShiftArranger"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1500" Top="0" Left="0">
+  
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="370"/>
@@ -16,9 +17,13 @@
             <StackPanel>
                 <TextBlock>Doctors</TextBlock>
                 <DataGrid x:Name="DoctorListView" Height="350" Width="1300"  AutoGenerateColumns="False"
-                          ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                          ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                          BeginningEdit="ListView_BeginningEdit" 
+                          SelectionMode="Single" SelectionUnit="FullRow" CellEditEnding="ListView_CellEditEnding" 
+                          CanUserAddRows="False" CanUserSortColumns="False" CanUserDeleteRows="False"
+                          CanUserResizeColumns="False" CanUserReorderColumns="False" CanUserResizeRows="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn  Width="80" Header="ID" Binding="{Binding ID}"/>
+                        <DataGridTextColumn  Width="80" Header="ID" Binding="{Binding ID, Mode=TwoWay}"/>
                         <DataGridTextColumn  Width="70" Header="Type"  Binding="{Binding doctorType}"/>
                         <DataGridTextColumn  Width="80" Header="Main Ward"  Binding="{Binding mainWard}"/>
                         <DataGridTextColumn  Width="200" Header="Available Ward"  Binding="{Binding capableOf}"/>
@@ -34,24 +39,24 @@
                 </DataGrid>
             </StackPanel>
             <StackPanel VerticalAlignment="Center">
-                <Button Click="Button_Click" Margin="0,10" Width="100" Content="Inititalize Doctors" />
-                <Button Click="Button_AssignDuty" Margin="0,10" Width="100" Content="Assign Duty" />
+                <Button Click="DoctorView_SaveChange" Margin="0,10" Width="100" Content="儲存更變"/>
+                <Button Click="Button_Click" Margin="0,10" Width="100" Content="Inititalize Doctors"/>
+                <Button Click="Button_Test" Margin="0,10" Width="100" Content="Assign Duty" />
             </StackPanel>
         </DockPanel>
         <DockPanel Grid.Row="1">
             <StackPanel  Width="500">
-                <ListView x:Name="RankShiftSummaryViewList" Width="500" Height="150">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="醫師職等" Width="80"  DisplayMemberBinding="{Binding doctorRank}"/>
-                            <GridViewColumn Header="人數" Width="60"  DisplayMemberBinding="{Binding doctorCount}"/>
-                            <GridViewColumn Header="平日班/人" Width="60" DisplayMemberBinding="{Binding nonHolidayShiftPerPerson}"/>
-                            <GridViewColumn Header="假日班/人" Width="60" DisplayMemberBinding="{Binding holidayShiftPerPerson}"/>
-                            <GridViewColumn Header="總假日班人次" Width="100" DisplayMemberBinding="{Binding totalNonHolidayShift}"/>
-                            <GridViewColumn Header="總平日班人次" Width="100" DisplayMemberBinding="{Binding totalHolidayShift}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                <DataGrid x:Name="RankShiftSummaryViewList" Width="500" Height="150"  AutoGenerateColumns="False" 
+                          IsReadOnly ="True" CanUserResizeColumns="False" CanUserResizeRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="醫師職等" Width="80"  Binding="{Binding doctorRank}"/>
+                        <DataGridTextColumn Header="人數" Width="60"  Binding="{Binding doctorCount}"/>
+                        <DataGridTextColumn Header="平日班/人" Width="60" Binding="{Binding nonHolidayShiftPerPerson}"/>
+                        <DataGridTextColumn Header="假日班/人" Width="60" Binding="{Binding holidayShiftPerPerson}"/>
+                        <DataGridTextColumn Header="總假日班人次" Width="100" Binding="{Binding totalNonHolidayShift}"/>
+                        <DataGridTextColumn Header="總平日班人次" Width="100" Binding="{Binding totalHolidayShift}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
                 <Button Content="refresh" Click="Button_Click_2"/>
             </StackPanel>
             <StackPanel Orientation="Vertical">
@@ -77,7 +82,7 @@
                         <TextBox TextAlignment="Center"  Width="200"></TextBox>
                     </Border>
                 </StackPanel>
-                <Button> CALCULATE </Button>
+                <Button>CALCULATE</Button>
                 <StackPanel Orientation="Horizontal">
                     <Border BorderBrush="Black" BorderThickness="2" Margin="3">
                         <TextBlock TextAlignment="Center" Width="65">假日數</TextBlock>
@@ -110,17 +115,15 @@
 
             </StackPanel>
             <StackPanel>
-                <ListView Width="400" Height="100" x:Name="WardShiftListView">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="病房" Width="80" DisplayMemberBinding="{Binding ward}"/>
-                            <GridViewColumn Header="假日班人次" Width="80" DisplayMemberBinding="{Binding holidayShift}"/>
-                            <GridViewColumn Header="平日班人次" Width="80" DisplayMemberBinding="{Binding nonHolidayShift}"/>
-                            <GridViewColumn Header="可分配人力" Width="100" DisplayMemberBinding="{Binding availableDoctor}"/>
-
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                <DataGrid Width="400" Height="100" x:Name="WardShiftListView"  AutoGenerateColumns="False"
+                          IsReadOnly ="True" CanUserResizeColumns="False" CanUserResizeRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="病房" Width="80" Binding="{Binding ward}"/>
+                        <DataGridTextColumn Header="假日班人次" Width="80" Binding="{Binding holidayShift}"/>
+                        <DataGridTextColumn Header="平日班人次" Width="80" Binding="{Binding nonHolidayShift}"/>
+                        <DataGridTextColumn Header="可分配人力" Width="100" Binding="{Binding availableDoctor}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
                 <Button Click="Button_Click_1">refresh</Button>
             </StackPanel>
 
@@ -129,44 +132,44 @@
         </DockPanel>
         <StackPanel Grid.Row="2">
             <DockPanel>
-                <ListView x:Name="dateListView" Width="1300" Height="200">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Width="80" Header="Ward" DisplayMemberBinding="{Binding ward}"/>
-                            <GridViewColumn Width="35" Header="1"  DisplayMemberBinding="{Binding date[0]}"/>
-                            <GridViewColumn Width="35" Header="2"  DisplayMemberBinding="{Binding date[1]}"/>
-                            <GridViewColumn Width="35" Header="3"  DisplayMemberBinding="{Binding date[2]}"/>
-                            <GridViewColumn Width="35" Header="4"  DisplayMemberBinding="{Binding date[3]}"/>
-                            <GridViewColumn Width="35" Header="5"  DisplayMemberBinding="{Binding date[4]}"/>
-                            <GridViewColumn Width="35" Header="6"  DisplayMemberBinding="{Binding date[5]}"/>
-                            <GridViewColumn Width="35" Header="7"  DisplayMemberBinding="{Binding date[6]}"/>
-                            <GridViewColumn Width="35" Header="8"  DisplayMemberBinding="{Binding date[7]}"/>
-                            <GridViewColumn Width="35" Header="9"  DisplayMemberBinding="{Binding date[8]}"/>
-                            <GridViewColumn Width="35" Header="10"  DisplayMemberBinding="{Binding date[9]}"/>
-                            <GridViewColumn Width="35" Header="11"  DisplayMemberBinding="{Binding date[10]}"/>
-                            <GridViewColumn Width="35" Header="12"  DisplayMemberBinding="{Binding date[11]}"/>
-                            <GridViewColumn Width="35" Header="13"  DisplayMemberBinding="{Binding date[12]}"/>
-                            <GridViewColumn Width="35" Header="14"  DisplayMemberBinding="{Binding date[13]}"/>
-                            <GridViewColumn Width="35" Header="15"  DisplayMemberBinding="{Binding date[14]}"/>
-                            <GridViewColumn Width="35" Header="16"  DisplayMemberBinding="{Binding date[15]}"/>
-                            <GridViewColumn Width="35" Header="17"  DisplayMemberBinding="{Binding date[16]}"/>
-                            <GridViewColumn Width="35" Header="18"  DisplayMemberBinding="{Binding date[17]}"/>
-                            <GridViewColumn Width="35" Header="19"  DisplayMemberBinding="{Binding date[18]}"/>
-                            <GridViewColumn Width="35" Header="20"  DisplayMemberBinding="{Binding date[19]}"/>
-                            <GridViewColumn Width="35" Header="21"  DisplayMemberBinding="{Binding date[20]}"/>
-                            <GridViewColumn Width="35" Header="22"  DisplayMemberBinding="{Binding date[21]}"/>
-                            <GridViewColumn Width="35" Header="23"  DisplayMemberBinding="{Binding date[22]}"/>
-                            <GridViewColumn Width="35" Header="24"  DisplayMemberBinding="{Binding date[23]}"/>
-                            <GridViewColumn Width="35" Header="25"  DisplayMemberBinding="{Binding date[24]}"/>
-                            <GridViewColumn Width="35" Header="26"  DisplayMemberBinding="{Binding date[25]}"/>
-                            <GridViewColumn Width="35" Header="27"  DisplayMemberBinding="{Binding date[26]}"/>
-                            <GridViewColumn Width="35" Header="28"  DisplayMemberBinding="{Binding date[27]}"/>
-                            <GridViewColumn Width="35" Header="29"  DisplayMemberBinding="{Binding date[28]}"/>
-                            <GridViewColumn Width="35" Header="30"  DisplayMemberBinding="{Binding date[29]}"/>
-                            <GridViewColumn Width="35" Header="31"  DisplayMemberBinding="{Binding date[30]}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                <DataGrid x:Name="dateListView" Width="1300" Height="200"
+                           AutoGenerateColumns="False"
+                          CanUserResizeColumns="False" CanUserResizeRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Width="80" Header="Ward" Binding="{Binding ward}"/>
+                        <DataGridTextColumn Width="35" Header="1"  Binding="{Binding date[0]}"/>
+                        <DataGridTextColumn Width="35" Header="2"  Binding="{Binding date[1]}"/>
+                        <DataGridTextColumn Width="35" Header="3"  Binding="{Binding date[2]}"/>
+                        <DataGridTextColumn Width="35" Header="4"  Binding="{Binding date[3]}"/>
+                        <DataGridTextColumn Width="35" Header="5"  Binding="{Binding date[4]}"/>
+                        <DataGridTextColumn Width="35" Header="6"  Binding="{Binding date[5]}"/>
+                        <DataGridTextColumn Width="35" Header="7"  Binding="{Binding date[6]}"/>
+                        <DataGridTextColumn Width="35" Header="8"  Binding="{Binding date[7]}"/>
+                        <DataGridTextColumn Width="35" Header="9"  Binding="{Binding date[8]}"/>
+                        <DataGridTextColumn Width="35" Header="10"  Binding="{Binding date[9]}"/>
+                        <DataGridTextColumn Width="35" Header="11"  Binding="{Binding date[10]}"/>
+                        <DataGridTextColumn Width="35" Header="12"  Binding="{Binding date[11]}"/>
+                        <DataGridTextColumn Width="35" Header="13"  Binding="{Binding date[12]}"/>
+                        <DataGridTextColumn Width="35" Header="14"  Binding="{Binding date[13]}"/>
+                        <DataGridTextColumn Width="35" Header="15"  Binding="{Binding date[14]}"/>
+                        <DataGridTextColumn Width="35" Header="16"  Binding="{Binding date[15]}"/>
+                        <DataGridTextColumn Width="35" Header="17"  Binding="{Binding date[16]}"/>
+                        <DataGridTextColumn Width="35" Header="18"  Binding="{Binding date[17]}"/>
+                        <DataGridTextColumn Width="35" Header="19"  Binding="{Binding date[18]}"/>
+                        <DataGridTextColumn Width="35" Header="20"  Binding="{Binding date[19]}"/>
+                        <DataGridTextColumn Width="35" Header="21"  Binding="{Binding date[20]}"/>
+                        <DataGridTextColumn Width="35" Header="22"  Binding="{Binding date[21]}"/>
+                        <DataGridTextColumn Width="35" Header="23"  Binding="{Binding date[22]}"/>
+                        <DataGridTextColumn Width="35" Header="24"  Binding="{Binding date[23]}"/>
+                        <DataGridTextColumn Width="35" Header="25"  Binding="{Binding date[24]}"/>
+                        <DataGridTextColumn Width="35" Header="26"  Binding="{Binding date[25]}"/>
+                        <DataGridTextColumn Width="35" Header="27"  Binding="{Binding date[26]}"/>
+                        <DataGridTextColumn Width="35" Header="28"  Binding="{Binding date[27]}"/>
+                        <DataGridTextColumn Width="35" Header="29"  Binding="{Binding date[28]}"/>
+                        <DataGridTextColumn Width="35" Header="30"  Binding="{Binding date[29]}"/>
+                        <DataGridTextColumn Width="35" Header="31"  Binding="{Binding date[30]}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
                 <StackPanel Orientation="Vertical">
                     <Button Click="Button_Click" Margin="0,10" Width="100" Content="Inititalize WorkDay" />
                 </StackPanel>
