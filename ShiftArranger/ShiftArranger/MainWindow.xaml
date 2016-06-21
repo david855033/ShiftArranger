@@ -16,31 +16,102 @@
         <DockPanel  Grid.Row="0">
             <StackPanel>
                 <TextBlock>Doctors</TextBlock>
-                <DataGrid x:Name="DoctorListView" Height="350" Width="1300"  AutoGenerateColumns="False"
+                <DataGrid x:Name="DoctorListView" Height="350" Width="1380"  AutoGenerateColumns="False"
                           ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                          BeginningEdit="ListView_BeginningEdit" 
-                          SelectionMode="Single" SelectionUnit="FullRow" CellEditEnding="ListView_CellEditEnding" 
+                          SelectionMode="Single" SelectionUnit="FullRow" 
                           CanUserAddRows="False" CanUserSortColumns="False" CanUserDeleteRows="False"
-                          CanUserResizeColumns="False" CanUserReorderColumns="False" CanUserResizeRows="False">
+                          CanUserResizeColumns="False" CanUserReorderColumns="False" CanUserResizeRows="False" CurrentCellChanged="ListView_CurrentCellChanged" CellEditEnding="ListView_CellEditEnding">
                     <DataGrid.Columns>
-                        <DataGridTextColumn  Width="80" Header="ID" Binding="{Binding ID, Mode=TwoWay}"/>
-                        <DataGridTextColumn  Width="70" Header="Type"  Binding="{Binding doctorType}"/>
-                        <DataGridTextColumn  Width="80" Header="Main Ward"  Binding="{Binding mainWard}"/>
-                        <DataGridTextColumn  Width="200" Header="Available Ward"  Binding="{Binding capableOf}"/>
-                        <DataGridTextColumn  Width="50" Header="總班"  Binding="{Binding totalDuty}"/>
-                        <DataGridTextColumn  Width="50" Header="平日班"  Binding="{Binding nonHolidayDuty}"/>
-                        <DataGridTextColumn  Width="50" Header="假日班"  Binding="{Binding holidayDuty}"/>
-                        <DataGridTextColumn  Width="50" Header="周工時"  Binding="{Binding totalWorkHour}"/>
-                        <DataGridTextColumn  Width="150" Header="Want"  Binding="{Binding absoluteWantThisDay}"/>
-                        <DataGridTextColumn  Width="150" Header="Avoid"  Binding="{Binding absoluteAvoidThisDay}"/>
-                        <DataGridTextColumn  Width="150" Header="Relative Want"  Binding="{Binding relativeWantThisDay}"/>
-                        <DataGridTextColumn  Width="150" Header="Relative Avoid"  Binding="{Binding relativeAvoidThisDay}"/>
+                        <DataGridTextColumn  Width="50" Header="ID" Binding="{Binding ID}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Background" Value="{Binding ID_Color}" />
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Width="100" Header="name" Binding="{Binding name}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Background" Value="{Binding name_Color}" />
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Width="80" Header="doctorType" Binding="{Binding doctorType}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Background" Value="{Binding doctorType_Color}" />
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Width="80" Header="mainWard" Binding="{Binding mainWard}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Background" Value="{Binding mainWard_Color}" />
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Width="140" Header="capableOf" Binding="{Binding capableOf}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Background" Value="{Binding capableOf_Color}" />
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Width="80" Header="totalDuty" Binding="{Binding totalDuty}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Background" Value="{Binding totalDuty_Color}" />
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Width="120" Header="nonHolidayDuty" Binding="{Binding nonHolidayDuty}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Background" Value="{Binding nonHolidayDuty_Color}" />
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Width="120" Header="totalWorkHour" Binding="{Binding totalWorkHour}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Background" Value="{Binding totalWorkHour_Color}" />
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Width="150" Header="absoluteWantThisDay" Binding="{Binding absoluteWantThisDay}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Background" Value="{Binding absoluteWantThisDay_Color}" />
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Width="150" Header="absoluteAvoidThisDay" Binding="{Binding absoluteAvoidThisDay}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Background" Value="{Binding absoluteAvoidThisDay_Color}" />
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Width="150" Header="relativeWantThisDay" Binding="{Binding relativeWantThisDay}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Background" Value="{Binding relativeWantThisDay_Color}" />
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn  Width="150" Header="relativeAvoidThisDay" Binding="{Binding relativeAvoidThisDay}">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="Background" Value="{Binding relativeAvoidThisDay_Color}" />
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
             <StackPanel VerticalAlignment="Center">
                 <Button Click="DoctorView_SaveChange" Margin="0,10" Width="100" Content="儲存更變"/>
-                <Button Click="Button_Click" Margin="0,10" Width="100" Content="Inititalize Doctors"/>
+                <Button Click="Initialize_Doctor_List" Margin="0,10" Width="100" Content="Inititalize Doctors"/>
                 <Button Click="Button_Test" Margin="0,10" Width="100" Content="Assign Duty" />
             </StackPanel>
         </DockPanel>
@@ -171,7 +242,7 @@
                     </DataGrid.Columns>
                 </DataGrid>
                 <StackPanel Orientation="Vertical">
-                    <Button Click="Button_Click" Margin="0,10" Width="100" Content="Inititalize WorkDay" />
+                    <Button  Margin="0,10" Width="100" Content="Inititalize WorkDay" />
                 </StackPanel>
             </DockPanel>
         </StackPanel>

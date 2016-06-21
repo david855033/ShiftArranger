@@ -31,30 +31,34 @@ namespace ShiftArranger
             viewModel = new ViewModel(mainLogic);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Initialize_Doctor_List(object sender, RoutedEventArgs e)
         {
             mainLogic.arrange();
             viewModel.refreshDoctorList();
             DoctorListView.ItemsSource = viewModel.doctorList;
         }
+
         private void DoctorView_SaveChange(object sender, RoutedEventArgs e)
         {
-            if (viewModel.doctorList == null)
-                return;
-            var newList = new List<DoctorInformation>();
-            bool error = false;
-            foreach (var row in viewModel.doctorList)
-            {
-                var newDoctorInformation = new DoctorInformation();
-                if (row.ID == "")
-                {
-                    error = true;
-                    row.ID = "####";
-                    DoctorListView.Items.Refresh();
-                }
+            if (viewModel.doctorList == null) return;
+            bool canSave = true;
 
-                newDoctorInformation.ID = row.ID;
-                newDoctorInformation.name = row.name;
+            if (canSave)
+            {
+                var newDoctorList = new List<DoctorInformation>();
+                bool fail = false;
+                foreach (var doctorInViewModel in viewModel.doctorList)
+                {
+                    var toAdd = new DoctorInformation();
+
+
+                    toAdd.ID = doctorInViewModel.ID;
+                    toAdd.name = doctorInViewModel.name;
+                    toAdd.mainWard = doctorInViewModel.mainWard.getWardFromString(out fail);
+                    toAdd.capableOf = doctorInViewModel.capableOf.getWardListFromString(out fail);
+
+                    newDoctorList.Add(toAdd);
+                }
 
             }
         }
@@ -63,7 +67,6 @@ namespace ShiftArranger
         {
             viewModel.doctorList[0].ID = "1232131";
             DoctorListView.Items.Refresh();
-            ChangeDataGridColor(DoctorListView, modifiedCells);
         }
 
 
@@ -86,57 +89,26 @@ namespace ShiftArranger
         }
 
 
-        string contentBeforeEdit;
-        int editingRow, editingCol;
-        List<Tuple<int, int>> modifiedCells = new List<Tuple<int, int>>();
-        private void ListView_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        bool edited = false;
+        private void ListView_CurrentCellChanged(object sender, EventArgs e)
         {
-            var thisDataGrid = sender as DataGrid;
-            var cellInfo = thisDataGrid.CurrentCell;
-            editingCol = cellInfo.Column.DisplayIndex;
-            editingRow = thisDataGrid.SelectedIndex;
-            if (cellInfo != null)
+            if (edited)
             {
-                var column = cellInfo.Column as DataGridBoundColumn;
-                if (column != null)
+                try
                 {
-                    var element = new FrameworkElement() { DataContext = cellInfo.Item };
-                    BindingOperations.SetBinding(element, FrameworkElement.TagProperty, column.Binding);
-                    contentBeforeEdit = element.Tag?.ToString();
+                    (sender as DataGrid).Items.Refresh();
+                    edited = false;
+                }
+                catch
+                {
+                    edited = true;
                 }
             }
+
         }
         private void ListView_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            var thisDataGrid = sender as DataGrid;
-            var cellInfo = thisDataGrid.CurrentCell;
-            var newContent = ((TextBox)e.EditingElement).Text.ToString();
-            if (contentBeforeEdit != newContent && contentBeforeEdit != null)
-            {
-                modifiedCells.Add(new Tuple<int, int>(editingRow, editingCol));
-            }
-            ChangeDataGridColor(thisDataGrid, modifiedCells);
+            edited = true;
         }
-
-        private void ChangeDataGridColor(DataGrid datagrid, List<Tuple<int, int>> cells)
-        {
-            foreach (var c in cells)
-            {
-                int row = c.Item1;
-                int col = c.Item2;
-                DataGridRow thisRow =
-                    datagrid.ItemContainerGenerator.ContainerFromItem(datagrid.Items[row]) as DataGridRow;
-                DataGridCell thisColumnInthisRow =
-                    datagrid.Columns[col].GetCellContent(thisRow) as DataGridCell;
-
-                thisColumnInthisRow.Background = new SolidColorBrush(Colors.Yellow);
-            }
-        }
-
-
-
-
-
-
     }
 }

@@ -13,12 +13,12 @@ namespace ShiftArranger
         public IEnumerable<Doctor_DayCount> doctor_DayCountList = new List<Doctor_DayCount>();
         public int daysInThisMonths, weekDayOfTheFirstDay;
         public IEnumerable<int> Holidays= new List<int>();
-        
 
         public void arrange()
         {
             var dateListFactory = new DateListFactory(31, new int[] { 2, 3, 9, 10, 16, 17, 23, 24, 30, 31 }, WardSets.allWards);
             dateList = dateListFactory.getDateList();
+
             var doctorListFactory = new DoctorListFactory();
             doctorList = doctorListFactory.getDoctorList();
 
