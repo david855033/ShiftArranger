@@ -51,5 +51,43 @@ namespace ShiftArranger
             fail = true;
             return WardType.A091;
         }
+        public static DoctorType getDoctorTypeFromString(this string input, out bool fail)
+        {
+            foreach (var doctorType in DoctorTypeSets.allDoctorTypes)
+            {
+                if (input.IndexOf(doctorType.ToString()) >= 0)
+                {
+                    fail = false;
+                    return doctorType;
+                }
+            }
+            fail = true;
+            return DoctorType.PGY;
+        }
+        public static int getIntFromString(this string input, out bool fail)
+        {
+            int result;
+            fail = !int.TryParse(input, out result);
+            return result;
+        }
+        public static List<int> getIntListFromString(this string input, out bool fail)
+        {
+            string[] split = input.Split(',');
+            List<int> result = new List<int>();
+            bool success = true;
+            fail = false;
+            foreach (var s in split)
+            {
+                int i;
+                success = int.TryParse(s, out i);
+                if (success && i < 31 && i >0)
+                {
+                    result.Add(i);
+                }
+            }
+            result = result.Distinct().ToList();
+            result.Sort();
+            return result;
+        }
     }
 }

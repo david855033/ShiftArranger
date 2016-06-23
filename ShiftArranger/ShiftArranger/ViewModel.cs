@@ -47,7 +47,6 @@ namespace ShiftArranger
                 totalDuty_Color = brush;
                 holidayDuty_Color = brush;
                 nonHolidayDuty_Color = brush;
-                totalWorkHour_Color = brush;
             }
             private string _ID;
             public string ID
@@ -57,7 +56,7 @@ namespace ShiftArranger
                 {
                     _ID = value;
                     ID_Color = yellowBrush;
-                    if(_ID.Length>1)
+                    if (_ID.Length > 1)
                         ID_Color = redBrush;
                 }
             }
@@ -183,7 +182,7 @@ namespace ShiftArranger
             }
             public Brush holidayDuty_Color { get; set; }
 
-                    private string _nonHolidayDuty;
+            private string _nonHolidayDuty;
             public string nonHolidayDuty
             {
                 get { return _nonHolidayDuty; }
@@ -194,19 +193,6 @@ namespace ShiftArranger
                 }
             }
             public Brush nonHolidayDuty_Color { get; set; }
-
-            private string _totalWorkHour;
-            public string totalWorkHour
-            {
-                get { return _totalWorkHour; }
-                set
-                {
-                    _totalWorkHour = value;
-                    totalWorkHour_Color = yellowBrush;
-                }
-            }
-            public Brush totalWorkHour_Color { get; set; }
-            
         }
         private ObservableCollection<DoctorInformationView> _doctorList;
         public ObservableCollection<DoctorInformationView> doctorList
@@ -234,6 +220,9 @@ namespace ShiftArranger
                     absoluteWantThisDay = d.absoluteWantThisDay.getStringFromList(),
                     relativeAvoidThisDay = d.relativeAvoidThisDay.getStringFromList(),
                     relativeWantThisDay = d.relativeWantThisDay.getStringFromList(),
+                    totalDuty = (d.nonHolidayDuty + d.holidayDuty).ToString(),
+                    holidayDuty = d.holidayDuty.ToString(),
+                    nonHolidayDuty = d.nonHolidayDuty.ToString(),
                     mainWard = d.mainWard.ToString(),
                     capableOf = d.capableOf.getStringFromList(),
                     doctorType = d.doctorType.ToString(),
