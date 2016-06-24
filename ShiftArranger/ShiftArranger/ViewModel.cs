@@ -407,22 +407,11 @@ namespace ShiftArranger
             public string ward { get; set; }
             public string holidayShift { get; set; }
             public string nonHolidayShift { get; set; }
-            public string availableDoctor { get; set; }
+            public string availableHolidayDoctor { get; set; }
+            public string availableWorkDayDoctor { get; set; }
         }
-        public ObservableCollection<WardShiftView> WardShiftList;
-        public void refreshWardShiftList()
-        {
-            WardShiftList = new ObservableCollection<WardShiftView>();
-            WardShiftView NICU = new WardShiftView()
-            {
-                ward = "NICU",
-                holidayShift = "5",
-                nonHolidayShift = "10",
-                availableDoctor = "10"
-            };
-            WardShiftList.Add(NICU);
-            OnPropertyChanged(nameof(WardShiftList));
-        }
+        public ObservableCollection<WardShiftView> wardShiftList;
+
 
         public class RankShiftSummaryView
         {

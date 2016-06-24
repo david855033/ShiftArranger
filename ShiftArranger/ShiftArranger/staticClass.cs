@@ -86,6 +86,11 @@ namespace ShiftArranger
             fail = true;
             return DateType.Workday;
         }
+        public static T getRandomElement<T>(this List<T> input)
+        {
+            var index = Rand.getRand(input.Count);
+            return input[index];
+        }
         public static int getIntFromString(this string input, out bool fail)
         {
             int result;

@@ -195,15 +195,18 @@
                 </DataGrid>
             </StackPanel>
             <StackPanel>
-                <DataGrid Width="400" Height="100" x:Name="WardShiftListView"  AutoGenerateColumns="False"
-                          IsReadOnly ="True" CanUserResizeColumns="False" CanUserResizeRows="False">
+                <DataGrid Width="500" Height="150" x:Name="WardShiftListView"  AutoGenerateColumns="False" CanUserReorderColumns="False"
+                          CanUserSortColumns="False"
+                          IsReadOnly ="True" CanUserResizeColumns="False" CanUserResizeRows="False" ItemsSource="{Binding wardShiftList}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="病房" Width="80" Binding="{Binding ward}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="假日班人次" Width="80" Binding="{Binding holidayShift}"/>
-                        <DataGridTextColumn Header="平日班人次" Width="80" Binding="{Binding nonHolidayShift}"/>
-                        <DataGridTextColumn Header="可分配人力" Width="100" Binding="{Binding availableDoctor}"/>
+                        <DataGridTextColumn Header="需求假日班人次" Width="100" Binding="{Binding holidayShift}"/>
+                        <DataGridTextColumn Header="需求平日班人次" Width="100" Binding="{Binding nonHolidayShift}"/>
+                        <DataGridTextColumn Header="主要假日人次" Width="100" Binding="{Binding availableHolidayDoctor}"/>
+                        <DataGridTextColumn Header="主要平日人次" Width="100" Binding="{Binding availableWorkDayDoctor}"/>
                     </DataGrid.Columns>
                 </DataGrid>
+                <Button Click="CalculateWardShiftList">試算</Button>
             </StackPanel>
 
             <StackPanel>

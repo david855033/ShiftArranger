@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace ShiftArranger
 {
+    public static class Rand
+    {
+        static Random rnd = new Random(DateTime.Now.Second);
+        public static int getRand(int i) { return rnd.Next(i); }
+    }
     public class MainLogic
     {
         public IEnumerable<DateInformation> dateList = new List<DateInformation>();
         public IEnumerable<DoctorInformation> doctorList = new List<DoctorInformation>();
-        public IEnumerable<Doctor_DayCount> doctor_DayCountList = new List<Doctor_DayCount>();
         public int daysInThisMonths, weekDayOfTheFirstDay;
         public IEnumerable<int> Holidays = new List<int>();
 
@@ -25,6 +29,72 @@ namespace ShiftArranger
             var dateListFactory = new DateListFactory(daysInThisMonths, weekDayOfTheFirstDay, Holidays, WardSets.allWards);
             dateList = dateListFactory.getDateList();
         }
+
+        public void setArrangedDutyToZero()
+        {
+            foreach (var d in doctorList)
+            {
+                d.arrangedHolidayDuty = 0;
+                d.arrangedNonHolidayDuty = 0;
+            }
+        }
+        public void arrange()
+        {
+            bool fail=true;
+            while (fail)
+            {
+                try
+                {
+                    arrangeOne();
+                    fail = false;
+                }
+                catch
+                {
+                    fail = true;
+                }
+            }
+        }
+        public void arrangeOne()
+        {
+            int bias = Rand.getRand(daysInThisMonths);
+            setArrangedDutyToZero();
+            for (int i = 0; i < daysInThisMonths; i++)
+            {
+                int j = (i + bias) % daysInThisMonths;
+                foreach (var ward in WardSets.allWards)
+                {
+                    var currentDateList = dateList.First(x => x.wardType == ward);
+                    var dateType = currentDateList.dateType[j];
+                    var query = from q in doctorList
+                                where q.capableOf.Contains(ward) &&
+                                (dateType == DateType.Holiday ? (q.holidayDuty > q.arrangedHolidayDuty) :  //若為假日還有假日班可用
+                                (q.nonHolidayDuty > q.arrangedNonHolidayDuty))                             //若為平日還有平日班可用
+                                select q;
+                    var AvailableDoctorList = new List<DoctorInformation>(query);
+                    //排除同一天已經安排
+                    AvailableDoctorList.RemoveAll(x => DateInformation.isDoctorInThisDay(j, x.ID, dateList) == true);
+
+                    //排除連續值班
+                    if (j > 0)
+                    {
+                        AvailableDoctorList.RemoveAll(x => DateInformation.isDoctorInThisDay(j - 1, x.ID, dateList) == true);
+                    }
+
+                    //填入
+                    var DoctorToBeAssign = AvailableDoctorList.getRandomElement<DoctorInformation>();
+                    currentDateList.dutyDoctor[j] = DoctorToBeAssign.ID;
+                    if (dateType == DateType.Holiday)
+                    {
+                        DoctorToBeAssign.arrangedHolidayDuty++;
+                    }
+                    else
+                    {
+                        DoctorToBeAssign.arrangedNonHolidayDuty++;
+                    }
+
+                }
+            }
+        }
     }
 
     public class DateInformation
@@ -32,6 +102,16 @@ namespace ShiftArranger
         public WardType wardType;
         public DateType[] dateType = new DateType[31];
         public string[] dutyDoctor = new string[31];
+
+        static public bool isDoctorInThisDay(int index, string ID, IEnumerable<DateInformation> theList)
+        {
+            foreach (var dateInfo in theList)
+            {
+                if (dateInfo.dutyDoctor[index] == ID)
+                    return true;
+            }
+            return false;
+        }
 
         public override string ToString()
         {
@@ -41,7 +121,6 @@ namespace ShiftArranger
                 result.Append("\t" + dateType[i].ToString());
                 result.Append("," + dutyDoctor[i]);
             }
-
             return result.ToString();
         }
 
@@ -70,6 +149,8 @@ namespace ShiftArranger
         public IEnumerable<WardType> capableOf;
         public int holidayDuty;
         public int nonHolidayDuty;
+        public int arrangedHolidayDuty;
+        public int arrangedNonHolidayDuty;
         public IEnumerable<int> absoluteWantThisDay;
         public IEnumerable<int> absoluteAvoidThisDay;
         public IEnumerable<int> relativeWantThisDay;
@@ -116,13 +197,6 @@ namespace ShiftArranger
             if (result != 0) return -result;
             return this.ID.CompareTo(that.ID);
         }
-    }
-    public class WardShiftInformation
-    {
-        public WardType ward;
-        public int holidayShift;
-        public int nonHolidayShift;
-        public int availableDoctor;
     }
 
     public enum WardType

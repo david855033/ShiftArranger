@@ -37,7 +37,7 @@ namespace ShiftArranger
             LoadDoctorListFrom(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdc");
             LoadDateListFrom(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdt");
         }
-   
+
 
         private void Initialize_Doctor_List(object sender, RoutedEventArgs e)
         {
@@ -315,7 +315,7 @@ namespace ShiftArranger
             dateListView.Items.Refresh();
         }
 
-      
+
         bool edited = false;
         private void ListView_CurrentCellChanged(object sender, EventArgs e)
         {
@@ -368,13 +368,46 @@ namespace ShiftArranger
 
         private void Arrange(object sender, RoutedEventArgs e)
         {
+            bool fail;
+            mainLogic.daysInThisMonths = viewModel.daysInThisMonth.getIntFromString(out fail);
+            mainLogic.weekDayOfTheFirstDay = viewModel.firstWeekDayOfThisMonth.getIntFromString(out fail);
+            mainLogic.arrange();
+            viewModel.refreshDateList();
+            viewModel.refreshDoctorList();
 
+            dateListView.ItemsSource = viewModel.dateList;
+            DoctorListView.ItemsSource = viewModel.doctorList;
         }
 
         private void Window_Unloaded(object sender, System.ComponentModel.CancelEventArgs e)
         {
             SaveDoctorListTo(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdc");
             SaveDateListTo(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdt");
+        }
+
+        private void CalculateWardShiftList(object sender, RoutedEventArgs e)
+        {
+            var NewWardShiftList = new ObservableCollection<ViewModel.WardShiftView>();
+            foreach (var ward in WardSets.allWards)
+            {
+                bool fail;
+                var newWardShift = new ViewModel.WardShiftView();
+                newWardShift.ward = ward.ToString();
+                newWardShift.holidayShift = holidayCountView.Text;
+                newWardShift.nonHolidayShift = workdayCountView.Text;
+                newWardShift.availableHolidayDoctor =
+                  (from q in mainLogic.doctorList
+                   where q.mainWard == ward
+                   select q.holidayDuty).Sum().ToString();
+                newWardShift.availableWorkDayDoctor =
+                  (from q in mainLogic.doctorList
+                   where q.mainWard == ward
+                   select q.nonHolidayDuty).Sum().ToString();
+                NewWardShiftList.Add(newWardShift);
+            }
+            viewModel.wardShiftList = NewWardShiftList;
+            WardShiftListView.ItemsSource = viewModel.wardShiftList;
+            WardShiftListView.Items.Refresh();
         }
     }
 }
