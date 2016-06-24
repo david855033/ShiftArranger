@@ -14,24 +14,23 @@ namespace ShiftArranger
         public int daysInThisMonths, weekDayOfTheFirstDay;
         public IEnumerable<int> Holidays = new List<int>();
 
-        public void arrange()
+        public void initializedDoctors()
         {
-            var dateListFactory = new DateListFactory(31, new int[] { 2, 3, 9, 10, 16, 17, 23, 24, 30, 31 }, WardSets.allWards);
-            dateList = dateListFactory.getDateList();
-
             var doctorListFactory = new DoctorListFactory();
             doctorList = doctorListFactory.getDoctorList();
+        }
 
-            var totalDutyDayAnalyzer = new TotalDutyDayAnalyzer(dateList, doctorList);
-            doctor_DayCountList = totalDutyDayAnalyzer.getDoctor_DayCountList();
+        public void initializeDate()
+        {
+            var dateListFactory = new DateListFactory(daysInThisMonths, weekDayOfTheFirstDay, Holidays, WardSets.allWards);
+            dateList = dateListFactory.getDateList();
         }
     }
 
     public class DateInformation
     {
-        public int date;
-        public DateType dateType;
-        public DoctorInformation dutyDoctor;
+        public DateType[] dateType = new DateType[31];
+        public DoctorInformation[] dutyDoctor = new DoctorInformation[31];
         public WardType wardType;
     }
 
@@ -97,7 +96,7 @@ namespace ShiftArranger
     }
     public static class WardSets
     {
-        public static WardType[] allWards = new WardType[] { WardType.A091, WardType.A093, WardType.NBR, WardType.NICU, WardType.PICU };
+        public static WardType[] allWards = new WardType[] { WardType.PICU, WardType.NICU, WardType.A091, WardType.A093, WardType.NBR };
         public static WardType[] NICU = new WardType[] { WardType.NICU };
     }
     public static class DoctorTypeSets

@@ -12,8 +12,10 @@ namespace ShiftArranger
         IEnumerable<int> holidays;
         IEnumerable<WardType> wardTypes;
         int daysInThisMonth;
-        public DateListFactory(int daysInThisMonth, IEnumerable<int> holidays, IEnumerable<WardType> wardTypes)
+        int firstWeekDayofThisMonth;
+        public DateListFactory(int daysInThisMonth,int firstWeekDayofThisMonth, IEnumerable<int> holidays, IEnumerable<WardType> wardTypes)
         {
+            this.firstWeekDayofThisMonth = firstWeekDayofThisMonth;
             this.daysInThisMonth = daysInThisMonth;
             this.holidays = holidays;
             this.wardTypes = wardTypes;
@@ -21,27 +23,24 @@ namespace ShiftArranger
         public List<DateInformation> getDateList()
         {
             var dateList = new List<DateInformation>();
-            for (int i = 1; i <= daysInThisMonth; i++)
+            foreach (var w in WardSets.allWards)
             {
-                DateType setDateTypeTo = DateType.Workday;
-                if (holidays.Contains(i))
+                var toAdd = new DateInformation();
+                for (int i = 0; i < daysInThisMonth; i++)
                 {
-                    setDateTypeTo = DateType.Holiday;
+                    toAdd.wardType = w;
+                    DateType setDateTypeTo = DateType.Workday;
+                    if (holidays.Contains(i + 1))
+                    {
+                        setDateTypeTo = DateType.Holiday;
+                    }
+                    else if (holidays.Contains(i + 2))
+                    {
+                        setDateTypeTo = DateType.Weekend;
+                    }
+                    toAdd.dateType[i] = setDateTypeTo;
                 }
-                else if (holidays.Contains(i + 1))
-                {
-                    setDateTypeTo = DateType.Weekend;
-                }
-                foreach (var w in wardTypes)
-                {
-                    dateList.Add(
-                        new DateInformation()
-                        {
-                            date = i,
-                            dateType = setDateTypeTo,
-                            wardType = w
-                        });
-                }
+                dateList.Add(toAdd);
             }
             return dateList;
         }

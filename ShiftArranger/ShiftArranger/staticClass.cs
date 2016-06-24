@@ -64,6 +64,7 @@ namespace ShiftArranger
             fail = true;
             return DoctorType.PGY;
         }
+
         public static int getIntFromString(this string input, out bool fail)
         {
             int result;

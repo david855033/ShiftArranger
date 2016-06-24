@@ -24,11 +24,17 @@ namespace ShiftArranger
         static Brush whiteBrush = new SolidColorBrush(Colors.White);
         static Brush yellowBrush = new SolidColorBrush(Colors.Yellow);
         static Brush redBrush = new SolidColorBrush(Colors.Red);
+        static Brush greenBrush = new SolidColorBrush(Colors.Green);
+        static Brush lightGreenBrush = new SolidColorBrush(Colors.LightGreen);
+        static Brush blackBrush = new SolidColorBrush(Colors.Black);
 
         MainLogic mainLogic;
         public ViewModel(MainLogic mainLogic)
         {
             this.mainLogic = mainLogic;
+            _daysInThisMonth = 31;
+            _firstWeekDayOfThisMonth = 1;
+            _additionalHolidays = new List<int>();
         }
 
         public class DoctorInformationView
@@ -233,27 +239,152 @@ namespace ShiftArranger
             OnPropertyChanged(nameof(doctorList));
         }
 
-        public class classDateInformationView
+        public class PropertyArray<T>
         {
-            public string ward { get; set; }
-            public string[] date { get; set; }
-            public classDateInformationView()
+            private T[] array;
+            Brush[] brushArray;
+            int daysInMonth;
+            public PropertyArray(T[] array, Brush[] brushArray, int daysInMonth)
             {
-                date = new string[31];
+                this.array = array;
+                this.brushArray = brushArray;
+                this.daysInMonth = daysInMonth;
+            }
+            public T this[int index]
+            {
+                get
+                {
+                    return array[index];
+                }
+                set
+                {
+                    array[index] = value;
+                    if (index < daysInMonth) brushArray[index] = yellowBrush;
+                }
             }
         }
-        public ObservableCollection<classDateInformationView> dateList;
-        public void refreshDutyDay()
+        public class DateInformationView
         {
-            dateList = new ObservableCollection<classDateInformationView>();
-            var toAdd = new classDateInformationView();
-            toAdd.ward = "TEST";
-            for (int i = 0; i < toAdd.date.Length; i++)
+            public string ward { get; set; }
+            string[] _date;
+            public PropertyArray<string> date { get; set; }
+            public DateType[] dateType { get; set; }
+            public Brush[] date_Color { get; set; }
+            public int daysInMonth;
+            public DateInformationView(int daysInMonth)
             {
-                toAdd.date[i] = "T";
+                this.daysInMonth = daysInMonth;
+                _date = new string[31];
+                date_Color = new Brush[31];
+                dateType = new DateType[31];
+                date = new PropertyArray<string>(_date, date_Color, daysInMonth);
             }
-            dateList.Add(toAdd);
+            public void setAllBrush(Brush brush)
+            {
+                for (int i = 0; i < 31; i++)
+                {
+                    date_Color[i] = brush;
+                    if (dateType[i] == DateType.Holiday)
+                        date_Color[i] = greenBrush;
+                    if (dateType[i] == DateType.Weekend)
+                        date_Color[i] = lightGreenBrush;
+                    if (i >= daysInMonth)
+                        date_Color[i] = blackBrush;
+                }
+            }
+        }
+        public ObservableCollection<DateInformationView> dateList;
+        public void refreshDateList()
+        {
+            dateList = new ObservableCollection<DateInformationView>();
+            foreach (var d in mainLogic.dateList)
+            {
+                var toAdd = new DateInformationView(_daysInThisMonth);
+                toAdd.ward = d.wardType.ToString();
+                for (int i = 0; i < toAdd.daysInMonth; i++)
+                {
+                    toAdd.dateType = d.dateType;
+                    if (d.dutyDoctor[i] == null)
+                    {
+                        toAdd.date[i] = "";
+                    }
+                    else
+                    {
+                        toAdd.date[i] = d.dutyDoctor[i].ID;
+                    }
+                }
+                toAdd.setAllBrush(whiteBrush);
+                dateList.Add(toAdd);
+            }
             OnPropertyChanged(nameof(dateList));
+        }
+
+        int _daysInThisMonth;
+        public string daysInThisMonth
+        {
+            get
+            {
+                return _daysInThisMonth.ToString();
+            }
+            set
+            {
+                bool fail = false;
+                int v = value.getIntFromString(out fail);
+                if (!fail && v >= 28 && v <= 31)
+                {
+                    _daysInThisMonth = v;
+                }
+                else
+                {
+                    _daysInThisMonth = 31;
+                }
+                OnPropertyChanged(nameof(daysInThisMonth));
+            }
+        }
+        int _firstWeekDayOfThisMonth;
+        public string firstWeekDayOfThisMonth
+        {
+            get
+            {
+                return _firstWeekDayOfThisMonth.ToString();
+            }
+            set
+            {
+                bool fail = false;
+                int v = value.getIntFromString(out fail);
+                if (!fail && v > 0 && v <= 7)
+                {
+                    _firstWeekDayOfThisMonth = v;
+                }
+                else
+                {
+                    _firstWeekDayOfThisMonth = 1;
+                }
+                OnPropertyChanged(nameof(firstWeekDayOfThisMonth));
+            }
+        }
+
+        List<int> _additionalHolidays;
+        public string additionalHolidays
+        {
+            get
+            {
+                return _additionalHolidays.getStringFromList();
+            }
+            set
+            {
+                bool fail = false;
+                List<int> v = value.getIntListFromString(out fail);
+                if (!fail)
+                {
+                    _additionalHolidays = v;
+                }
+                else
+                {
+                    _additionalHolidays = new List<int>();
+                }
+                OnPropertyChanged(nameof(additionalHolidays));
+            }
         }
 
         public class WardShiftView
