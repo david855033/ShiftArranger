@@ -29,12 +29,39 @@ namespace ShiftArranger
 
     public class DateInformation
     {
-        public DateType[] dateType = new DateType[31];
-        public DoctorInformation[] dutyDoctor = new DoctorInformation[31];
         public WardType wardType;
+        public DateType[] dateType = new DateType[31];
+        public string[] dutyDoctor = new string[31];
+
+        public override string ToString()
+        {
+            StringBuilder result = new StringBuilder(wardType.ToString());
+            for (int i = 0; i < 31; i++)
+            {
+                result.Append("\t" + dateType[i].ToString());
+                result.Append("," + dutyDoctor[i]);
+            }
+
+            return result.ToString();
+        }
+
+        public static DateInformation loadFromString(string input)
+        {
+            var newDateInformation = new DateInformation();
+            string[] split = input.Split('\t');
+            bool fail;
+            newDateInformation.wardType = split[0].getWardFromString(out fail);
+            for (int i = 0; i < 31; i++)
+            {
+                newDateInformation.dateType[i] = split[i + 1].Split(',')[0].getDateTypeFromString(out fail);
+                newDateInformation.dutyDoctor[i] = split[i + 1].Split(',')[1];
+            }
+
+            return newDateInformation;
+        }
     }
 
-    public class DoctorInformation
+    public class DoctorInformation : IComparable
     {
         public string ID;
         public string name;
@@ -81,6 +108,14 @@ namespace ShiftArranger
             newDoctor.relativeAvoidThisDay = split[10].getIntListFromString(out fail);
             return newDoctor;
         }
+
+        public int CompareTo(object obj)
+        {
+            var that = (obj as DoctorInformation);
+            int result = this.doctorType.CompareTo(that.doctorType);
+            if (result != 0) return -result;
+            return this.ID.CompareTo(that.ID);
+        }
     }
     public class WardShiftInformation
     {
@@ -109,6 +144,11 @@ namespace ShiftArranger
         Holiday,
         Weekend,
         Workday
+    }
+    public static class DateTypeSets
+    {
+        public static DateType[] allDateTypes =
+            new DateType[] { DateType.Holiday, DateType.Weekend, DateType.Workday };
     }
     public enum DoctorType
     {

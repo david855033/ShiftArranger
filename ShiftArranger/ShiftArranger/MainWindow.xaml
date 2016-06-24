@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShiftArranger"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1500" Top="0" Left="0">
+        Title="MainWindow" Height="800" Width="1500" Top="0" Left="0" Closing="Window_Unloaded">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -30,14 +30,14 @@
                                 </Style>
                             </DataGridTextColumn.CellStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn  Width="160" Header="姓名" Binding="{Binding name}">
+                        <DataGridTextColumn  Width="100" Header="姓名" Binding="{Binding name}">
                             <DataGridTextColumn.CellStyle>
                                 <Style TargetType="DataGridCell">
                                     <Setter Property="Background" Value="{Binding name_Color}" />
                                 </Style>
                             </DataGridTextColumn.CellStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn  Width="50" Header="醫師類型" Binding="{Binding doctorType}">
+                        <DataGridTextColumn  Width="75" Header="醫師類型" Binding="{Binding doctorType}">
                             <DataGridTextColumn.CellStyle>
                                 <Style TargetType="DataGridCell">
                                     <Setter Property="Background" Value="{Binding doctorType_Color}" />
@@ -79,28 +79,31 @@
                                 </Style>
                             </DataGridTextColumn.CellStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn  Width="150" Header="絕對要值班" Binding="{Binding absoluteWantThisDay}">
+                        <DataGridTextColumn  Width="80" Header="實際總班" />
+                        <DataGridTextColumn  Width="80" Header="實際假日班"/>
+                        <DataGridTextColumn  Width="80" Header="實際平日班"/>
+                        <DataGridTextColumn  Width="100" Header="絕對要值班" Binding="{Binding absoluteWantThisDay}">
                             <DataGridTextColumn.CellStyle>
                                 <Style TargetType="DataGridCell">
                                     <Setter Property="Background" Value="{Binding absoluteWantThisDay_Color}" />
                                 </Style>
                             </DataGridTextColumn.CellStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn  Width="150" Header="絕對不值班" Binding="{Binding absoluteAvoidThisDay}">
+                        <DataGridTextColumn  Width="100" Header="絕對不值班" Binding="{Binding absoluteAvoidThisDay}">
                             <DataGridTextColumn.CellStyle>
                                 <Style TargetType="DataGridCell">
                                     <Setter Property="Background" Value="{Binding absoluteAvoidThisDay_Color}" />
                                 </Style>
                             </DataGridTextColumn.CellStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn  Width="150" Header="希望要值班" Binding="{Binding relativeWantThisDay}">
+                        <DataGridTextColumn  Width="100" Header="希望要值班" Binding="{Binding relativeWantThisDay}">
                             <DataGridTextColumn.CellStyle>
                                 <Style TargetType="DataGridCell">
                                     <Setter Property="Background" Value="{Binding relativeWantThisDay_Color}" />
                                 </Style>
                             </DataGridTextColumn.CellStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn  Width="150" Header="希望不值班" Binding="{Binding relativeAvoidThisDay}">
+                        <DataGridTextColumn  Width="100" Header="希望不值班" Binding="{Binding relativeAvoidThisDay}">
                             <DataGridTextColumn.CellStyle>
                                 <Style TargetType="DataGridCell">
                                     <Setter Property="Background" Value="{Binding relativeAvoidThisDay_Color}" />
@@ -111,27 +114,17 @@
                 </DataGrid>
             </StackPanel>
             <StackPanel VerticalAlignment="Center">
-                <Button Click="Initialize_Doctor_List" Margin="0,10" Width="100" Content="Inititalize Doctors"/>
                 <Button Click="DoctorView_SaveChange" Margin="0,10" Width="100" Content="儲存更變"/>
+                <Button Click="DoctorView_AddDoctor" Margin="0,10" Width="100" Content="新增醫師"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Click="DoctorView_DeleteDoctor" Margin="0,10" Width="75" Content="刪除醫師代號"/>
+                    <TextBox Width="25" Margin="0,10" x:Name="DeleteID"/>
+                </StackPanel>
                 <Button Margin="0,10" Click="SaveDoctorList" Width="100" Content="儲存醫師名單..."/>
                 <Button Margin="0,10" Click="LoadDoctorList" Width="100" Content="載入醫師名單..."/>
             </StackPanel>
         </DockPanel>
         <DockPanel Grid.Row="1">
-            <StackPanel  Width="500">
-                <DataGrid x:Name="RankShiftSummaryViewList" Width="500" Height="150"  AutoGenerateColumns="False" 
-                          IsReadOnly ="True" CanUserResizeColumns="False" CanUserResizeRows="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="醫師職等" Width="80"  Binding="{Binding doctorRank}"/>
-                        <DataGridTextColumn Header="人數" Width="60"  Binding="{Binding doctorCount}"/>
-                        <DataGridTextColumn Header="平日班/人" Width="60" Binding="{Binding nonHolidayShiftPerPerson}"/>
-                        <DataGridTextColumn Header="假日班/人" Width="60" Binding="{Binding holidayShiftPerPerson}"/>
-                        <DataGridTextColumn Header="總假日班人次" Width="100" Binding="{Binding totalNonHolidayShift}"/>
-                        <DataGridTextColumn Header="總平日班人次" Width="100" Binding="{Binding totalHolidayShift}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Button Content="refresh" Click="Button_Click_2"/>
-            </StackPanel>
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
                     <Border BorderBrush="Black" BorderThickness="2" Margin="3">
@@ -144,7 +137,7 @@
                         <TextBlock TextAlignment="Center" Width="100">本月一日為星期</TextBlock>
                     </Border>
                     <Border BorderBrush="Blue" BorderThickness="2"  Margin="3">
-                        <TextBox TextAlignment="Center"  Width="40" Text="{Binding firstWeekDayOfThisMonth, Mode=TwoWay}"/> 
+                        <TextBox TextAlignment="Center"  Width="40" Text="{Binding firstWeekDayOfThisMonth, Mode=TwoWay}"/>
                     </Border>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
@@ -156,19 +149,18 @@
                     </Border>
                     <Button Click="GenerateWeekends" Margin="3">算周末</Button>
                 </StackPanel>
-                <Button>CALCULATE</Button>
                 <StackPanel Orientation="Horizontal">
                     <Border BorderBrush="Black" BorderThickness="2" Margin="3">
                         <TextBlock TextAlignment="Center" Width="65">假日數</TextBlock>
                     </Border>
                     <Border BorderBrush="Green" BorderThickness="2"  Margin="3">
-                        <TextBlock TextAlignment="Center"  Width="65">0</TextBlock>
+                        <TextBlock TextAlignment="Center" Width="65"  x:Name="holidayCountView" Text="{Binding holidayCount}"/>
                     </Border>
                     <Border BorderBrush="Black" BorderThickness="2" Margin="3">
                         <TextBlock TextAlignment="Center" Width="65">假日班數</TextBlock>
                     </Border>
                     <Border BorderBrush="Green" BorderThickness="2"  Margin="3">
-                        <TextBlock TextAlignment="Center"  Width="65">0</TextBlock>
+                        <TextBlock TextAlignment="Center" Width="65"  x:Name="holidayDutyCountView" Text="{Binding holidayDutyCount}"/>
                     </Border>
                 </StackPanel>
 
@@ -177,16 +169,30 @@
                         <TextBlock TextAlignment="Center" Width="65">平日數</TextBlock>
                     </Border>
                     <Border BorderBrush="Green" BorderThickness="2"  Margin="3">
-                        <TextBlock TextAlignment="Center"  Width="65">0</TextBlock>
+                        <TextBlock TextAlignment="Center" Width="65"  x:Name="workdayCountView" Text="{Binding workdayCount}"/>
                     </Border>
                     <Border BorderBrush="Black" BorderThickness="2" Margin="3">
                         <TextBlock TextAlignment="Center" Width="65">平日班數</TextBlock>
                     </Border>
                     <Border BorderBrush="Green" BorderThickness="2"  Margin="3">
-                        <TextBlock TextAlignment="Center"  Width="65">0</TextBlock>
+                        <TextBlock TextAlignment="Center" Width="65"  x:Name="workdayDutyCountView" Text="{Binding workdayDutyCount}"/>
                     </Border>
                 </StackPanel>
-
+                <Button Margin="10" Click="Initialize_WorkDay">重置日曆(會清空所有排班)</Button>
+                <Button Margin="10" Click="Arrange">求解</Button>
+            </StackPanel>
+            <StackPanel  Width="500">
+                <DataGrid x:Name="RankShiftSummaryViewList" Width="500" Height="150"  AutoGenerateColumns="False" 
+                          IsReadOnly ="True" CanUserResizeColumns="False" CanUserResizeRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="醫師職等" Width="80"  Binding="{Binding doctorRank}"/>
+                        <DataGridTextColumn Header="人數" Width="60"  Binding="{Binding doctorCount}"/>
+                        <DataGridTextColumn Header="平日班/人" Width="60" Binding="{Binding nonHolidayShiftPerPerson}"/>
+                        <DataGridTextColumn Header="假日班/人" Width="60" Binding="{Binding holidayShiftPerPerson}"/>
+                        <DataGridTextColumn Header="總假日班人次" Width="100" Binding="{Binding totalNonHolidayShift}"/>
+                        <DataGridTextColumn Header="總平日班人次" Width="100" Binding="{Binding totalHolidayShift}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
             </StackPanel>
             <StackPanel>
                 <DataGrid Width="400" Height="100" x:Name="WardShiftListView"  AutoGenerateColumns="False"
@@ -198,7 +204,6 @@
                         <DataGridTextColumn Header="可分配人力" Width="100" Binding="{Binding availableDoctor}"/>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Button Click="Button_Click_1">refresh</Button>
             </StackPanel>
 
             <StackPanel>
@@ -206,7 +211,7 @@
         </DockPanel>
         <StackPanel Grid.Row="2">
             <DockPanel>
-                <DataGrid x:Name="dateListView" Width="1300" Height="200"
+                <DataGrid x:Name="dateListView" Width="1020" Height="150"
                            AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="Cell" 
                           CanUserSortColumns="False"
                           CanUserResizeColumns="False" CanUserReorderColumns="False" CanUserResizeRows="False" 
@@ -431,14 +436,20 @@
                             </DataGridTextColumn.CellStyle>
                         </DataGridTextColumn>
                     </DataGrid.Columns>
-                    
                 </DataGrid>
-                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                    <Button  Margin="0,10" Click ="Initialize_WorkDay" Width="100" Content="Inititalize WorkDay" />
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Width="100">
                     <Button  Margin="0,10" Click ="DateList_SaveChange" Width="100" Content="確認更變" />
                     <Button Margin="0,10" Click="SaveDateList" Width="100" Content="儲存班表..."/>
                     <Button Margin="0,10" Click="LoadDateList" Width="100" Content="載入班表..."/>
                 </StackPanel>
+                <ListView Height="200" Width="180">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="可行解" Width="100"/>
+                            <GridViewColumn Header="分數" Width="50"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
             </DockPanel>
         </StackPanel>
     </Grid>

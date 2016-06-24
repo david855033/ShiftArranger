@@ -28,11 +28,14 @@ namespace ShiftArranger
         public static List<WardType> getWardListFromString(this string input, out bool fail)
         {
             var result = new List<WardType>();
-            foreach (var ward in WardSets.allWards)
+            if (input != null)
             {
-                if (input.IndexOf(ward.ToString()) >= 0)
+                foreach (var ward in WardSets.allWards)
                 {
-                    result.Add(ward);
+                    if (input.IndexOf(ward.ToString()) >= 0)
+                    {
+                        result.Add(ward);
+                    }
                 }
             }
             fail = result.Count == 0;
@@ -40,12 +43,15 @@ namespace ShiftArranger
         }
         public static WardType getWardFromString(this string input, out bool fail)
         {
-            foreach (var ward in WardSets.allWards)
+            if (input != null)
             {
-                if (input.IndexOf(ward.ToString()) >= 0)
+                foreach (var ward in WardSets.allWards)
                 {
-                    fail = false;
-                    return ward;
+                    if (input.IndexOf(ward.ToString()) >= 0)
+                    {
+                        fail = false;
+                        return ward;
+                    }
                 }
             }
             fail = true;
@@ -53,18 +59,33 @@ namespace ShiftArranger
         }
         public static DoctorType getDoctorTypeFromString(this string input, out bool fail)
         {
-            foreach (var doctorType in DoctorTypeSets.allDoctorTypes)
+            if (input != null)
             {
-                if (input.IndexOf(doctorType.ToString()) >= 0)
+                foreach (var doctorType in DoctorTypeSets.allDoctorTypes)
                 {
-                    fail = false;
-                    return doctorType;
+                    if (input.IndexOf(doctorType.ToString()) >= 0)
+                    {
+                        fail = false;
+                        return doctorType;
+                    }
                 }
             }
             fail = true;
             return DoctorType.PGY;
         }
-
+        public static DateType getDateTypeFromString(this string input, out bool fail)
+        {
+            foreach (var dateType in DateTypeSets.allDateTypes)
+            {
+                if (input.IndexOf(dateType.ToString()) >= 0)
+                {
+                    fail = false;
+                    return dateType;
+                }
+            }
+            fail = true;
+            return DateType.Workday;
+        }
         public static int getIntFromString(this string input, out bool fail)
         {
             int result;
@@ -73,17 +94,20 @@ namespace ShiftArranger
         }
         public static List<int> getIntListFromString(this string input, out bool fail)
         {
-            string[] split = input.Split(',');
             List<int> result = new List<int>();
             bool success = true;
             fail = false;
-            foreach (var s in split)
+            if (input != null)
             {
-                int i;
-                success = int.TryParse(s, out i);
-                if (success && i < 31 && i >0)
+                string[] split = input.Split(',');
+                foreach (var s in split)
                 {
-                    result.Add(i);
+                    int i;
+                    success = int.TryParse(s, out i);
+                    if (success && i < 31 && i > 0)
+                    {
+                        result.Add(i);
+                    }
                 }
             }
             result = result.Distinct().ToList();

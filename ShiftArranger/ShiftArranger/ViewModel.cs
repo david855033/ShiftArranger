@@ -297,20 +297,20 @@ namespace ShiftArranger
         public void refreshDateList()
         {
             dateList = new ObservableCollection<DateInformationView>();
-            foreach (var d in mainLogic.dateList)
+            foreach (var date in mainLogic.dateList)
             {
                 var toAdd = new DateInformationView(_daysInThisMonth);
-                toAdd.ward = d.wardType.ToString();
+                toAdd.ward = date.wardType.ToString();
                 for (int i = 0; i < toAdd.daysInMonth; i++)
                 {
-                    toAdd.dateType = d.dateType;
-                    if (d.dutyDoctor[i] == null)
+                    toAdd.dateType = date.dateType;
+                    if (date.dutyDoctor[i] == null)
                     {
                         toAdd.date[i] = "";
                     }
                     else
                     {
-                        toAdd.date[i] = d.dutyDoctor[i].ID;
+                        toAdd.date[i] = date.dutyDoctor[i];
                     }
                 }
                 toAdd.setAllBrush(whiteBrush);
@@ -339,6 +339,10 @@ namespace ShiftArranger
                     _daysInThisMonth = 31;
                 }
                 OnPropertyChanged(nameof(daysInThisMonth));
+                OnPropertyChanged(nameof(holidayCount));
+                OnPropertyChanged(nameof(workdayCount));
+                OnPropertyChanged(nameof(holidayDutyCount));
+                OnPropertyChanged(nameof(workdayDutyCount));
             }
         }
         int _firstWeekDayOfThisMonth;
@@ -361,9 +365,12 @@ namespace ShiftArranger
                     _firstWeekDayOfThisMonth = 1;
                 }
                 OnPropertyChanged(nameof(firstWeekDayOfThisMonth));
+                OnPropertyChanged(nameof(holidayCount));
+                OnPropertyChanged(nameof(workdayCount));
+                OnPropertyChanged(nameof(holidayDutyCount));
+                OnPropertyChanged(nameof(workdayDutyCount));
             }
         }
-
         List<int> _additionalHolidays;
         public string additionalHolidays
         {
@@ -384,8 +391,16 @@ namespace ShiftArranger
                     _additionalHolidays = new List<int>();
                 }
                 OnPropertyChanged(nameof(additionalHolidays));
+                OnPropertyChanged(nameof(holidayCount));
+                OnPropertyChanged(nameof(workdayCount));
+                OnPropertyChanged(nameof(holidayDutyCount));
+                OnPropertyChanged(nameof(workdayDutyCount));
             }
         }
+        public int holidayCount { get { return _additionalHolidays.Count; } }
+        public int workdayCount { get { return _daysInThisMonth - _additionalHolidays.Count; } }
+        public int holidayDutyCount { get { return holidayCount * WardSets.allWards.Count(); } }
+        public int workdayDutyCount { get { return workdayCount * WardSets.allWards.Count(); } }
 
         public class WardShiftView
         {

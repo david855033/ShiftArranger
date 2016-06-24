@@ -34,7 +34,10 @@ namespace ShiftArranger
             mainLogic = new MainLogic();
             viewModel = new ViewModel(mainLogic);
             this.DataContext = viewModel;
+            LoadDoctorListFrom(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdc");
+            LoadDateListFrom(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdt");
         }
+   
 
         private void Initialize_Doctor_List(object sender, RoutedEventArgs e)
         {
@@ -127,6 +130,7 @@ namespace ShiftArranger
             }
             if (allPassed)
             {
+                newDoctorList.Sort();
                 mainLogic.doctorList = newDoctorList;
                 viewModel.refreshDoctorList();
             }
@@ -139,17 +143,21 @@ namespace ShiftArranger
         private void SaveDoctorList(object sender, RoutedEventArgs e)
         {
             Doctor_SaveDialog.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            Doctor_SaveDialog.Filter = "sav files (*.sav)|*.sav";
+            Doctor_SaveDialog.Filter = "sdc files (*.sdc)|*.sdc";
             Doctor_SaveDialog.FilterIndex = 1;
             Doctor_SaveDialog.RestoreDirectory = true;
             if (Doctor_SaveDialog.ShowDialog() == true)
             {
-                using (var sw = new StreamWriter(Doctor_SaveDialog.FileName, false, Encoding.Default))
+                SaveDoctorListTo(Doctor_SaveDialog.FileName);
+            }
+        }
+        private void SaveDoctorListTo(string path)
+        {
+            using (var sw = new StreamWriter(path, false, Encoding.Default))
+            {
+                foreach (var doctor in mainLogic.doctorList)
                 {
-                    foreach (var doctor in mainLogic.doctorList)
-                    {
-                        sw.WriteLine(doctor.ToString());
-                    }
+                    sw.WriteLine(doctor.ToString());
                 }
             }
         }
@@ -157,19 +165,23 @@ namespace ShiftArranger
         private void LoadDoctorList(object sender, RoutedEventArgs e)
         {
             Doctor_LoadDialog.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            Doctor_LoadDialog.Filter = "sav files (*.sav)|*.sav";
+            Doctor_LoadDialog.Filter = "sdc files (*.sdc)|*.sdc";
             Doctor_LoadDialog.FilterIndex = 1;
             Doctor_LoadDialog.RestoreDirectory = true;
-            var newDoctorList = new List<DoctorInformation>();
             if (Doctor_LoadDialog.ShowDialog() == true)
             {
-                using (var sr = new StreamReader(Doctor_LoadDialog.FileName, Encoding.Default))
+                LoadDoctorListFrom(Doctor_LoadDialog.FileName);
+            }
+        }
+        private void LoadDoctorListFrom(string path)
+        {
+            var newDoctorList = new List<DoctorInformation>();
+            using (var sr = new StreamReader(path, Encoding.Default))
+            {
+                while (!sr.EndOfStream)
                 {
-                    while (!sr.EndOfStream)
-                    {
-                        string line = sr.ReadLine();
-                        newDoctorList.Add(DoctorInformation.loadFromString(line));
-                    }
+                    string line = sr.ReadLine();
+                    newDoctorList.Add(DoctorInformation.loadFromString(line));
                 }
             }
             mainLogic.doctorList = newDoctorList;
@@ -177,7 +189,6 @@ namespace ShiftArranger
             DoctorListView.ItemsSource = viewModel.doctorList;
             DoctorListView.Items.Refresh();
         }
-
         private void Initialize_WorkDay(object sender, RoutedEventArgs e)
         {
             bool fail;
@@ -188,7 +199,6 @@ namespace ShiftArranger
             viewModel.refreshDateList();
             dateListView.ItemsSource = viewModel.dateList;
         }
-
 
         private void DateList_SaveChange(object sender, RoutedEventArgs e)
         {
@@ -216,7 +226,7 @@ namespace ShiftArranger
                         }
                         else
                         {
-                            toAdd.dutyDoctor[i] = mainLogic.doctorList.FirstOrDefault(x => x.ID == dateInViewModel.date[i]);
+                            toAdd.dutyDoctor[i] = mainLogic.doctorList.FirstOrDefault(x => x.ID == dateInViewModel.date[i])?.ID;
                         }
                     }
                     toAdd.dateType = dateInViewModel.dateType;
@@ -236,38 +246,76 @@ namespace ShiftArranger
             dateListView.Items.Refresh();
 
         }
+        Microsoft.Win32.SaveFileDialog Date_SaveDialog = new Microsoft.Win32.SaveFileDialog();
         private void SaveDateList(object sender, RoutedEventArgs e)
         {
-
+            Date_SaveDialog.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            Date_SaveDialog.Filter = "sdt files (*.sdt)|*.sdt";
+            Date_SaveDialog.FilterIndex = 1;
+            Date_SaveDialog.RestoreDirectory = true;
+            if (Date_SaveDialog.ShowDialog() == true)
+            {
+                SaveDateListTo(Date_SaveDialog.FileName);
+            }
         }
-
+        private void SaveDateListTo(string path)
+        {
+            using (var sw = new StreamWriter(path, false, Encoding.Default))
+            {
+                foreach (var date in mainLogic.dateList)
+                {
+                    sw.WriteLine(date.ToString());
+                }
+                sw.WriteLine($"[daysIntheMonth]={viewModel.daysInThisMonth}");
+                sw.WriteLine($"[firstWeekDay]={viewModel.firstWeekDayOfThisMonth}");
+                sw.WriteLine($"[holiday]={viewModel.additionalHolidays}");
+            }
+        }
+        Microsoft.Win32.OpenFileDialog Date_LoadDialog = new Microsoft.Win32.OpenFileDialog();
         private void LoadDateList(object sender, RoutedEventArgs e)
         {
-
+            Date_LoadDialog.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            Date_LoadDialog.Filter = "sdt files (*.sdt)|*.sdt";
+            Date_LoadDialog.FilterIndex = 1;
+            Date_LoadDialog.RestoreDirectory = true;
+            if (Date_LoadDialog.ShowDialog() == true)
+            {
+                LoadDateListFrom(Date_LoadDialog.FileName);
+            }
         }
-
-
-
-
-        private void Button_AssignDuty(object sender, RoutedEventArgs e)
+        private void LoadDateListFrom(string path)
         {
+            var newDateList = new List<DateInformation>();
+            using (var sr = new StreamReader(path, Encoding.Default))
+            {
+                while (!sr.EndOfStream)
+                {
+                    string line = sr.ReadLine();
+                    if (line.Split('=')[0] == "[daysIntheMonth]")
+                    {
+                        viewModel.daysInThisMonth = line.Split('=')[1];
+                    }
+                    else if (line.Split('=')[0] == "[firstWeekDay]")
+                    {
+                        viewModel.firstWeekDayOfThisMonth = line.Split('=')[1];
+                    }
+                    else if (line.Split('=')[0] == "[holiday]")
+                    {
+                        viewModel.additionalHolidays = line.Split('=')[1];
+                    }
+                    else
+                    {
+                        newDateList.Add(DateInformation.loadFromString(line));
+                    }
+                }
+            }
+            mainLogic.dateList = newDateList;
             viewModel.refreshDateList();
             dateListView.ItemsSource = viewModel.dateList;
+            dateListView.Items.Refresh();
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            viewModel.refreshWardShiftList();
-            WardShiftListView.ItemsSource = viewModel.WardShiftList;
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-            viewModel.refreshRankShiftSummaryList();
-            RankShiftSummaryViewList.ItemsSource = viewModel.RankShiftSummaryList;
-        }
-
-
+      
         bool edited = false;
         private void ListView_CurrentCellChanged(object sender, EventArgs e)
         {
@@ -304,7 +352,29 @@ namespace ShiftArranger
             }
             viewModel.additionalHolidays = Holidays.getStringFromList();
         }
+        private void DoctorView_AddDoctor(object sender, RoutedEventArgs e)
+        {
+            viewModel.doctorList.Add(new ViewModel.DoctorInformationView());
+        }
+        private void DoctorView_DeleteDoctor(object sender, RoutedEventArgs e)
+        {
+            int index = new List<ViewModel.DoctorInformationView>(viewModel.doctorList).
+                FindIndex(x => x.ID == DeleteID.Text);
+            if (index >= 0)
+                viewModel.doctorList.RemoveAt(index);
+        }
 
 
+
+        private void Arrange(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Window_Unloaded(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            SaveDoctorListTo(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdc");
+            SaveDateListTo(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdt");
+        }
     }
 }
