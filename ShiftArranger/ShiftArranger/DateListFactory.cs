@@ -38,6 +38,10 @@ namespace ShiftArranger
                     {
                         setDateTypeTo = DateType.Weekend;
                     }
+                    for(int x = 0; x <toAdd.dutyDoctor.Length;x++)
+                    {
+                        toAdd.dutyDoctor[x] = "";
+                    }
                     toAdd.dateType[i] = setDateTypeTo;
                 }
                 dateList.Add(toAdd);

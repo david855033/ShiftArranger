@@ -1,0 +1,14 @@
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\bin\x64\Debug\ShiftArranger.exe.config
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\bin\x64\Debug\ShiftArranger.exe
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\bin\x64\Debug\ShiftArranger.pdb
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\MainWindow.g.cs
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\App.g.cs
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger_MarkupCompile.cache
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger_MarkupCompile.lref
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\MainWindow.baml
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger.g.resources
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger.Properties.Resources.resources
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger.csproj.GenerateResource.Cache
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger.exe
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger.pdb
+D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger.csprojResolveAssemblyReference.cache

@@ -34,10 +34,37 @@ namespace ShiftArranger
             mainLogic = new MainLogic();
             viewModel = new ViewModel(mainLogic);
             this.DataContext = viewModel;
-            LoadDoctorListFrom(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdc");
-            LoadDateListFrom(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdt");
+            try
+            {
+                LoadDoctorListFrom(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdc");
+            }
+            catch
+            {
+                GenerateDefaultDoctorList();
+            }
+            try
+            {
+                LoadDateListFrom(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdt");
+            }
+            catch
+            {
+                Initialize_WorkDay(this, new RoutedEventArgs());
+            }
         }
 
+        private void GenerateDefaultDoctorList()
+        {
+            var newDoctorList = new List<DoctorInformation>();
+
+            newDoctorList.Add(new DoctorInformation()
+            {
+            });
+
+            mainLogic.doctorList = newDoctorList;
+            viewModel.refreshDoctorList();
+            DoctorListView.ItemsSource = viewModel.doctorList;
+            DoctorListView.Items.Refresh();
+        }
 
         private void Initialize_Doctor_List(object sender, RoutedEventArgs e)
         {
@@ -218,7 +245,7 @@ namespace ShiftArranger
 
                 for (int i = 0; i < mainLogic.daysInThisMonths; i++)
                 {
-                    if (dateInViewModel.date[i] != "")
+                    if (dateInViewModel.dutyDoctorInDay[i] != "")
                     {
                         if (toAdd == null)
                         {
@@ -226,7 +253,7 @@ namespace ShiftArranger
                         }
                         else
                         {
-                            toAdd.dutyDoctor[i] = mainLogic.doctorList.FirstOrDefault(x => x.ID == dateInViewModel.date[i])?.ID;
+                            toAdd.dutyDoctor[i] = mainLogic.doctorList.FirstOrDefault(x => x.ID == dateInViewModel.dutyDoctorInDay[i])?.ID;
                         }
                     }
                     toAdd.dateType = dateInViewModel.dateType;
@@ -245,6 +272,20 @@ namespace ShiftArranger
             dateListView.ItemsSource = viewModel.dateList;
             dateListView.Items.Refresh();
 
+        }
+        private void dateListView_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        {
+
+            if (dateListView.SelectedCells.Count > 0)
+            {
+                var c = dateListView.SelectedCells.First();
+                string ID = (c.Item as ViewModel.DateInformationView).dutyDoctorInDay[c.Column.DisplayIndex - 1];
+
+                viewModel.setHighLight(ID);
+            }
+
+            dateListView.ItemsSource = viewModel.dateList;
+            dateListView.Items.Refresh();
         }
         Microsoft.Win32.SaveFileDialog Date_SaveDialog = new Microsoft.Win32.SaveFileDialog();
         private void SaveDateList(object sender, RoutedEventArgs e)
@@ -343,7 +384,7 @@ namespace ShiftArranger
             bool fail;
             int firstWeekDay = viewModel.firstWeekDayOfThisMonth.getIntFromString(out fail);
             List<int> Holidays = new List<int>();
-            for (int i = 0; i < 31; i++)
+            for (int i = 0; i < viewModel.daysInThisMonth.getIntFromString(out fail); i++)
             {
                 if (i % 7 == (7 - firstWeekDay - 1) || i % 7 == (7 - firstWeekDay))
                 {
@@ -360,6 +401,9 @@ namespace ShiftArranger
         {
             int index = new List<ViewModel.DoctorInformationView>(viewModel.doctorList).
                 FindIndex(x => x.ID == DeleteID.Text);
+            if (index < 0)
+                index = new List<ViewModel.DoctorInformationView>(viewModel.doctorList).
+                FindIndex(x => x.ID == "" || x.ID == null);
             if (index >= 0)
                 viewModel.doctorList.RemoveAt(index);
         }
@@ -371,6 +415,7 @@ namespace ShiftArranger
             bool fail;
             mainLogic.daysInThisMonths = viewModel.daysInThisMonth.getIntFromString(out fail);
             mainLogic.weekDayOfTheFirstDay = viewModel.firstWeekDayOfThisMonth.getIntFromString(out fail);
+            mainLogic.Holidays = viewModel.additionalHolidays.getIntListFromString(out fail);
             mainLogic.arrange();
             viewModel.refreshDateList();
             viewModel.refreshDoctorList();
@@ -384,7 +429,6 @@ namespace ShiftArranger
             SaveDoctorListTo(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdc");
             SaveDateListTo(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\default.sdt");
         }
-
         private void CalculateWardShiftList(object sender, RoutedEventArgs e)
         {
             var NewWardShiftList = new ObservableCollection<ViewModel.WardShiftView>();
@@ -409,5 +453,9 @@ namespace ShiftArranger
             WardShiftListView.ItemsSource = viewModel.wardShiftList;
             WardShiftListView.Items.Refresh();
         }
+
+
+
+
     }
 }

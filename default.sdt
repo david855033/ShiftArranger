@@ -1,0 +1,8 @@
+PICU	Weekend,G	Holiday,K	Holiday,G	Workday,I	Workday,h	Workday,K	Workday,h	Weekend,A	Holiday,I	Holiday,A	Workday,K	Workday,I	Workday,G	Workday,I	Weekend,G	Holiday,A	Holiday,N	Workday,L	Workday,N	Workday,A	Workday,G	Weekend,K	Holiday,I	Holiday,G	Workday,A	Workday,G	Workday,K	Workday,I	Weekend,A	Holiday,L	Holiday,K
+NICU	Weekend,B	Holiday,C	Holiday,D	Workday,E	Workday,C	Workday,D	Workday,C	Weekend,B	Holiday,E	Holiday,B	Workday,E	Workday,C	Workday,D	Workday,E	Weekend,C	Holiday,D	Holiday,K	Workday,H	Workday,D	Workday,B	Workday,D	Weekend,E	Holiday,H	Holiday,C	Workday,H	Workday,D	Workday,B	Workday,E	Weekend,C	Holiday,B	Holiday,H
+A091	Weekend,U	Holiday,V	Holiday,U	Workday,P	Workday,V	Workday,R	Workday,U	Weekend,R	Holiday,U	Holiday,V	Workday,R	Workday,U	Workday,P	Workday,Q	Weekend,R	Holiday,P	Holiday,X	Workday,R	Workday,P	Workday,Q	Workday,V	Weekend,P	Holiday,U	Holiday,Q	Workday,P	Workday,U	Workday,R	Workday,U	Weekend,P	Holiday,Q	Holiday,V
+A093	Weekend,O	Holiday,X	Holiday,S	Workday,O	Workday,°K	Workday,X	Workday,°K	Weekend,X	Holiday,O	Holiday,W	Workday,O	Workday,X	Workday,S	Workday,°K	Weekend,S	Holiday,°K	Holiday,O	Workday,À¹	Workday,°K	Workday,O	Workday,X	Weekend,S	Holiday,X	Holiday,S	Workday,O	Workday,X	Workday,S	Workday,O	Weekend,X	Holiday,°K	Holiday,S
+NBR	Weekend,T	Holiday,W	Holiday,l	Workday,À¹	Workday,T	Workday,n	Workday,W	Weekend,n	Holiday,À¹	Holiday,T	Workday,l	Workday,W	Workday,À¹	Workday,T	Weekend,À¹	Holiday,T	Holiday,W	Workday,V	Workday,U	Workday,W	Workday,T	Weekend,W	Holiday,À¹	Holiday,T	Workday,W	Workday,T	Workday,À¹	Workday,W	Weekend,T	Holiday,À¹	Holiday,R
+[daysIntheMonth]=31
+[firstWeekDay]=5
+[holiday]=2,3,9,10,16,17,23,24,30,31

@@ -109,7 +109,7 @@ namespace ShiftArranger
                 {
                     int i;
                     success = int.TryParse(s, out i);
-                    if (success && i < 31 && i > 0)
+                    if (success && i <= 31 && i > 0)
                     {
                         result.Add(i);
                     }
@@ -119,5 +119,29 @@ namespace ShiftArranger
             result.Sort();
             return result;
         }
+        public static List<DoctorInformation> getCopyOfDoctorList(this IEnumerable<DoctorInformation> doctorlist)
+        {
+            var newList = new List<DoctorInformation>();
+            foreach (var d in doctorlist)
+            {
+                var newDoctor = new DoctorInformation();
+                newDoctor.absoluteAvoidThisDay = d.absoluteAvoidThisDay;
+                newDoctor.absoluteWantThisDay = d.absoluteWantThisDay;
+                newDoctor.capableOf = d.capableOf;
+                newDoctor.doctorType= d.doctorType;
+                newDoctor.ID= d.ID;
+                newDoctor.mainWard= d.mainWard;
+                newDoctor.name = d.name;
+                newDoctor.relativeAvoidThisDay = d.relativeAvoidThisDay;
+                newDoctor.relativeWantThisDay = d.relativeWantThisDay;
+                newDoctor.nonHolidayDuty = d.nonHolidayDuty;
+                newDoctor.holidayDuty = d.holidayDuty;
+                newDoctor.arrangedHolidayDuty = 0;
+                newDoctor.arrangedNonHolidayDuty = 0;
+                newList.Add(newDoctor);
+            }
+            return newList;
+        }
     }
+
 }

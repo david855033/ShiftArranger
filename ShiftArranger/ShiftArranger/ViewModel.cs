@@ -23,9 +23,10 @@ namespace ShiftArranger
 
         static Brush whiteBrush = new SolidColorBrush(Colors.White);
         static Brush yellowBrush = new SolidColorBrush(Colors.Yellow);
+        static Brush blueBrush = new SolidColorBrush(Colors.LightBlue);
         static Brush redBrush = new SolidColorBrush(Colors.Red);
-        static Brush greenBrush = new SolidColorBrush(Colors.Green);
-        static Brush lightGreenBrush = new SolidColorBrush(Colors.LightGreen);
+        static Brush greenBrush = new SolidColorBrush(Colors.LawnGreen);
+        static Brush lightGreenBrush = new SolidColorBrush(Colors.YellowGreen);
         static Brush blackBrush = new SolidColorBrush(Colors.Black);
 
         MainLogic mainLogic;
@@ -62,7 +63,7 @@ namespace ShiftArranger
                 {
                     _ID = value;
                     ID_Color = yellowBrush;
-                    if (_ID.Length > 1)
+                    if (_ID?.Length > 2)
                         ID_Color = redBrush;
                 }
             }
@@ -199,6 +200,10 @@ namespace ShiftArranger
                 }
             }
             public Brush nonHolidayDuty_Color { get; set; }
+
+            public string arrangedHolidayDuty { get; set; }
+            public string arrangedNonHolidayDuty { get; set; }
+            public string arrangedTotalHolidayDuty { get; set; }
         }
         private ObservableCollection<DoctorInformationView> _doctorList;
         public ObservableCollection<DoctorInformationView> doctorList
@@ -232,6 +237,9 @@ namespace ShiftArranger
                     mainWard = d.mainWard.ToString(),
                     capableOf = d.capableOf.getStringFromList(),
                     doctorType = d.doctorType.ToString(),
+                    arrangedHolidayDuty = d.arrangedHolidayDuty.ToString(),
+                    arrangedNonHolidayDuty = d.arrangedNonHolidayDuty.ToString(),
+                    arrangedTotalHolidayDuty = (d.arrangedHolidayDuty + d.arrangedNonHolidayDuty).ToString()
                 };
                 toAdd.setAllBrush(whiteBrush);
                 doctorList.Add(toAdd);
@@ -254,7 +262,9 @@ namespace ShiftArranger
             {
                 get
                 {
-                    return array[index];
+                    if(index>=0)
+                        return array[index];
+                    return array[0];
                 }
                 set
                 {
@@ -267,29 +277,44 @@ namespace ShiftArranger
         {
             public string ward { get; set; }
             string[] _date;
-            public PropertyArray<string> date { get; set; }
+            public PropertyArray<string> dutyDoctorInDay { get; set; }
             public DateType[] dateType { get; set; }
-            public Brush[] date_Color { get; set; }
+            public Brush[] dutyDoctorInDay_Color { get; set; }
             public int daysInMonth;
             public DateInformationView(int daysInMonth)
             {
                 this.daysInMonth = daysInMonth;
                 _date = new string[31];
-                date_Color = new Brush[31];
+                dutyDoctorInDay_Color = new Brush[31];
                 dateType = new DateType[31];
-                date = new PropertyArray<string>(_date, date_Color, daysInMonth);
+                dutyDoctorInDay = new PropertyArray<string>(_date, dutyDoctorInDay_Color, daysInMonth);
+            }
+            public void setAllBrush(Brush brush, string highLight)
+            {
+                for (int i = 0; i < 31; i++)
+                {
+                    dutyDoctorInDay_Color[i] = brush;
+                    if (dateType[i] == DateType.Holiday)
+                        dutyDoctorInDay_Color[i] = greenBrush;
+                    if (dateType[i] == DateType.Weekend)
+                        dutyDoctorInDay_Color[i] = lightGreenBrush;
+                    if (i >= daysInMonth)
+                        dutyDoctorInDay_Color[i] = blackBrush;
+                    if (dutyDoctorInDay[i] == highLight)
+                        dutyDoctorInDay_Color[i] = blueBrush;
+                }
             }
             public void setAllBrush(Brush brush)
             {
                 for (int i = 0; i < 31; i++)
                 {
-                    date_Color[i] = brush;
+                    dutyDoctorInDay_Color[i] = brush;
                     if (dateType[i] == DateType.Holiday)
-                        date_Color[i] = greenBrush;
+                        dutyDoctorInDay_Color[i] = greenBrush;
                     if (dateType[i] == DateType.Weekend)
-                        date_Color[i] = lightGreenBrush;
+                        dutyDoctorInDay_Color[i] = lightGreenBrush;
                     if (i >= daysInMonth)
-                        date_Color[i] = blackBrush;
+                        dutyDoctorInDay_Color[i] = blackBrush;
                 }
             }
         }
@@ -306,16 +331,27 @@ namespace ShiftArranger
                     toAdd.dateType = date.dateType;
                     if (date.dutyDoctor[i] == null)
                     {
-                        toAdd.date[i] = "";
+                        toAdd.dutyDoctorInDay[i] = "";
                     }
                     else
                     {
-                        toAdd.date[i] = date.dutyDoctor[i];
+                        toAdd.dutyDoctorInDay[i] = date.dutyDoctor[i];
                     }
                 }
                 toAdd.setAllBrush(whiteBrush);
                 dateList.Add(toAdd);
             }
+            OnPropertyChanged(nameof(dateList));
+        }
+        public void setHighLight(string v)
+        {
+            var newDateList = new ObservableCollection<DateInformationView>();
+            foreach (var ward in dateList)
+            {
+                ward.setAllBrush(whiteBrush, v);
+                newDateList.Add(ward);
+            }
+            dateList = newDateList;
             OnPropertyChanged(nameof(dateList));
         }
 
@@ -436,6 +472,8 @@ namespace ShiftArranger
             RankShiftSummaryList.Add(R3);
             OnPropertyChanged(nameof(RankShiftSummaryList));
         }
+
+
     }
 
 }

@@ -30,72 +30,257 @@ namespace ShiftArranger
             dateList = dateListFactory.getDateList();
         }
 
-        public void setArrangedDutyToZero()
+        public void setArrangedDutyToZero(IEnumerable<DoctorInformation> InputdoctorList)
         {
-            foreach (var d in doctorList)
+            foreach (var d in InputdoctorList)
             {
                 d.arrangedHolidayDuty = 0;
                 d.arrangedNonHolidayDuty = 0;
+                d.arrangedWeekendDuty = 0;
             }
         }
+
+        List<resultGroup> resultPool;
+
         public void arrange()
         {
-            bool fail=true;
-            while (fail)
+            int times = 1000;
+            resultPool = new List<resultGroup>();
+            bool fail = true;
+            int i = 0;
+            while (fail && i++ <= times)
             {
-                try
+                var result = arrangeOne();
+                if (result != null)
                 {
-                    arrangeOne();
-                    fail = false;
+                    resultPool.Add(result);
                 }
-                catch
+            }
+            if (resultPool.Count == 0)
+            {
+                System.Windows.MessageBox.Show("無可行解");
+            }
+            resultPool.Sort();
+            dateList = resultPool.First().dateList;
+            doctorList = resultPool.First().doctorList;
+            CountActualDutyDay();
+            System.Windows.MessageBox.Show($"運算{times}次 共找出{resultPool.Count}組可行解.");
+        }
+        public void CountActualDutyDay()
+        {
+            foreach (var doctor in doctorList)
+            {
+                doctor.arrangedHolidayDuty = 0;
+                doctor.arrangedNonHolidayDuty = 0;
+                foreach (var ward in dateList)
                 {
-                    fail = true;
+                    for (int i = 0; i < daysInThisMonths; i++)
+                    {
+                        if (ward.dutyDoctor[i] == doctor.ID)
+                        {
+                            if (ward.dateType[i] == DateType.Holiday)
+                            {
+                                doctor.arrangedHolidayDuty++;
+                            }
+                            else
+                            {
+                                doctor.arrangedNonHolidayDuty++;
+                            }
+                        }
+
+                    }
                 }
             }
         }
-        public void arrangeOne()
+
+        public resultGroup arrangeOne()
         {
+            int score = 0;
             int bias = Rand.getRand(daysInThisMonths);
-            setArrangedDutyToZero();
+            var newDateList = new DateListFactory(daysInThisMonths, weekDayOfTheFirstDay, Holidays, WardSets.allWards).getDateList();
+            var newDoctorList = doctorList.getCopyOfDoctorList();
+            setArrangedDutyToZero(newDoctorList);
+            var rankDutyCounter = new DutyCounterForSameRank();
+
+            //預先塞班
+            for (int i = 0; i < daysInThisMonths; i++)
+            {
+                var doctorWantThisDay = newDoctorList.FindAll(x => x.absoluteWantThisDay.Contains(i + 1));
+                foreach (var d in doctorWantThisDay)
+                {
+                    var availableWard = newDateList.Find(x => x.wardType == d.mainWard);
+                    if (availableWard != null)
+                    {
+                        availableWard.dutyDoctor[i] = d.ID;
+                    }
+                    else
+                    {
+                        var anotherAvailableWard = newDateList.First(x => d.capableOf.Contains(x.wardType));
+                        if (anotherAvailableWard != null)
+                        {
+                            anotherAvailableWard.dutyDoctor[i] = d.ID;
+                        }
+                    }
+                }
+            }
             for (int i = 0; i < daysInThisMonths; i++)
             {
                 int j = (i + bias) % daysInThisMonths;
                 foreach (var ward in WardSets.allWards)
                 {
-                    var currentDateList = dateList.First(x => x.wardType == ward);
+                    var currentDateList = newDateList.First(x => x.wardType == ward);
                     var dateType = currentDateList.dateType[j];
-                    var query = from q in doctorList
+
+                    if (currentDateList.dutyDoctor[j] != "")
+                    {
+                        continue;
+                    }
+
+                    var query = from q in newDoctorList
                                 where q.capableOf.Contains(ward) &&
                                 (dateType == DateType.Holiday ? (q.holidayDuty > q.arrangedHolidayDuty) :  //若為假日還有假日班可用
                                 (q.nonHolidayDuty > q.arrangedNonHolidayDuty))                             //若為平日還有平日班可用
                                 select q;
                     var AvailableDoctorList = new List<DoctorInformation>(query);
-                    //排除同一天已經安排
-                    AvailableDoctorList.RemoveAll(x => DateInformation.isDoctorInThisDay(j, x.ID, dateList) == true);
+                    var priorityDoctorList = new List<DoctorInformation>();
+                    var SubOptimalDoctorList = new List<DoctorInformation>();
+                    var VerySubOptimalDoctorList = new List<DoctorInformation>();
 
-                    //排除連續值班
+
+                    //排除絕對不要這天
+                    AvailableDoctorList.RemoveAll(x => x.absoluteAvoidThisDay.Contains(j + 1));
+
+                    //排除同一天已經安排
+                    AvailableDoctorList.RemoveAll(x => DateInformation.isDoctorInThisDay(j, x.ID, newDateList) == true);
+
+                    //排除連續值班(j-1day)
                     if (j > 0)
                     {
-                        AvailableDoctorList.RemoveAll(x => DateInformation.isDoctorInThisDay(j - 1, x.ID, dateList) == true);
+                        AvailableDoctorList.RemoveAll(x => DateInformation.isDoctorInThisDay(j - 1, x.ID, newDateList) == true);
+                    }
+                    //排除連續值班(j+1 day)
+                    if (j < daysInThisMonths - 1)
+                    {
+                        AvailableDoctorList.RemoveAll(x => DateInformation.isDoctorInThisDay(j + 1, x.ID, newDateList) == true);
                     }
 
-                    //填入
-                    var DoctorToBeAssign = AvailableDoctorList.getRandomElement<DoctorInformation>();
-                    currentDateList.dutyDoctor[j] = DoctorToBeAssign.ID;
-                    if (dateType == DateType.Holiday)
+                    //往前排除五天內三班
+                    if (j > 4)
                     {
-                        DoctorToBeAssign.arrangedHolidayDuty++;
+                        AvailableDoctorList.RemoveAll(x =>
+                        DateInformation.isDoctorInThisDay(j - 2, x.ID, newDateList) == true
+                        && DateInformation.isDoctorInThisDay(j - 4, x.ID, newDateList) == true
+                        );
+                    }
+                    //往後排除五天內三班
+                    if (j < daysInThisMonths - 4)
+                    {
+                        AvailableDoctorList.RemoveAll(x =>
+                        DateInformation.isDoctorInThisDay(j + 2, x.ID, newDateList) == true
+                        && DateInformation.isDoctorInThisDay(j + 4, x.ID, newDateList) == true
+                        );
+                    }
+
+                    //一周不可超過兩班
+                    {
+                        int weekdayOfJ = (j + weekDayOfTheFirstDay - 1) % 7 + 1;
+                        int j_start = Math.Max(0, j - (weekdayOfJ - 1));
+                        int j_end = Math.Min(daysInThisMonths - 1, j_start + 6);
+                        var doctorToBeRemoved = new List<DoctorInformation>();
+                        foreach (var doctor in AvailableDoctorList)
+                        {
+                            int dutySum = 0;
+                            for (int h = j_start; h <= j_end; h++)
+                            {
+                                if (DateInformation.isDoctorInThisDay(h, doctor.ID, newDateList))
+                                {
+                                    dutySum++;
+                                    if (dutySum >= 2)
+                                    {
+                                        doctorToBeRemoved.Add(doctor);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        AvailableDoctorList.RemoveAll(x => doctorToBeRemoved.Contains(x));
+                    }
+
+                    //不符合主要病房
+                    var doctorListNotMainWard = AvailableDoctorList.FindAll(x => x.mainWard != ward);
+                    SubOptimalDoctorList.AddRange(doctorListNotMainWard);
+                    AvailableDoctorList.RemoveAll(x => doctorListNotMainWard.Contains(x));
+
+                    //長幼有序運算
+
+                    //三天值兩班
+
+                    //相對不喜歡這天
+
+
+                    //填入
+                    if (AvailableDoctorList.Count > 0)
+                    {
+                        DoctorInformation DoctorToBeAssign = AvailableDoctorList.getRandomElement<DoctorInformation>();
+                        currentDateList.dutyDoctor[j] = DoctorToBeAssign.ID;
+
+                        if (dateType == DateType.Holiday)
+                        {
+                            DoctorToBeAssign.arrangedHolidayDuty++;
+                            rankDutyCounter.setHolidayCount(DoctorToBeAssign.doctorType, DoctorToBeAssign.arrangedHolidayDuty);
+                        }
+                        else
+                        {
+                            if (dateType == DateType.Weekend)
+                                DoctorToBeAssign.arrangedWeekendDuty++;
+                            DoctorToBeAssign.arrangedNonHolidayDuty++;
+                            rankDutyCounter.setWorkdayCount(DoctorToBeAssign.doctorType, DoctorToBeAssign.arrangedNonHolidayDuty);
+                        }
+                    }
+                    else if (SubOptimalDoctorList.Count > 0)
+                    {
+                        DoctorInformation DoctorToBeAssign = SubOptimalDoctorList.getRandomElement<DoctorInformation>();
+                        currentDateList.dutyDoctor[j] = DoctorToBeAssign.ID;
+
+                        if (dateType == DateType.Holiday)
+                        {
+                            DoctorToBeAssign.arrangedHolidayDuty++;
+                            rankDutyCounter.setHolidayCount(DoctorToBeAssign.doctorType, DoctorToBeAssign.arrangedHolidayDuty);
+                        }
+                        else
+                        {
+                            if (dateType == DateType.Weekend)
+                                DoctorToBeAssign.arrangedWeekendDuty++;
+                            DoctorToBeAssign.arrangedNonHolidayDuty++;
+                            rankDutyCounter.setWorkdayCount(DoctorToBeAssign.doctorType, DoctorToBeAssign.arrangedNonHolidayDuty);
+                        }
+                        score--;
+
                     }
                     else
                     {
-                        DoctorToBeAssign.arrangedNonHolidayDuty++;
+                        return null;
                     }
-
                 }
             }
+            return new resultGroup() { score = score, doctorList = newDoctorList, dateList = newDateList };
+        }
+
+
+    }
+
+    public class resultGroup : IComparable
+    {
+        public IEnumerable<DoctorInformation> doctorList;
+        public IEnumerable<DateInformation> dateList;
+        public int score;
+
+        public int CompareTo(object obj)
+        {
+            return this.score.CompareTo((obj as resultGroup).score);
         }
     }
+
 
     public class DateInformation
     {
@@ -107,7 +292,7 @@ namespace ShiftArranger
         {
             foreach (var dateInfo in theList)
             {
-                if (dateInfo.dutyDoctor[index] == ID)
+                if (dateInfo.dutyDoctor[index] != null && dateInfo.dutyDoctor[index] == ID)
                     return true;
             }
             return false;
@@ -151,11 +336,11 @@ namespace ShiftArranger
         public int nonHolidayDuty;
         public int arrangedHolidayDuty;
         public int arrangedNonHolidayDuty;
+        public int arrangedWeekendDuty;
         public IEnumerable<int> absoluteWantThisDay;
         public IEnumerable<int> absoluteAvoidThisDay;
         public IEnumerable<int> relativeWantThisDay;
         public IEnumerable<int> relativeAvoidThisDay;
-
         public override string ToString()
         {
             StringBuilder result = new StringBuilder(ID);
@@ -165,6 +350,8 @@ namespace ShiftArranger
             result.Append("\t" + capableOf.getStringFromList());
             result.Append("\t" + holidayDuty);
             result.Append("\t" + nonHolidayDuty);
+            result.Append("\t" + arrangedHolidayDuty);
+            result.Append("\t" + arrangedNonHolidayDuty);
             result.Append("\t" + absoluteWantThisDay.getStringFromList());
             result.Append("\t" + absoluteAvoidThisDay.getStringFromList());
             result.Append("\t" + relativeWantThisDay.getStringFromList());
@@ -183,10 +370,12 @@ namespace ShiftArranger
             newDoctor.capableOf = split[4].getWardListFromString(out fail);
             newDoctor.holidayDuty = split[5].getIntFromString(out fail);
             newDoctor.nonHolidayDuty = split[6].getIntFromString(out fail);
-            newDoctor.absoluteWantThisDay = split[7].getIntListFromString(out fail);
-            newDoctor.absoluteAvoidThisDay = split[8].getIntListFromString(out fail);
-            newDoctor.relativeWantThisDay = split[9].getIntListFromString(out fail);
-            newDoctor.relativeAvoidThisDay = split[10].getIntListFromString(out fail);
+            newDoctor.arrangedHolidayDuty = split[7].getIntFromString(out fail);
+            newDoctor.arrangedNonHolidayDuty = split[8].getIntFromString(out fail);
+            newDoctor.absoluteWantThisDay = split[9].getIntListFromString(out fail);
+            newDoctor.absoluteAvoidThisDay = split[10].getIntListFromString(out fail);
+            newDoctor.relativeWantThisDay = split[11].getIntListFromString(out fail);
+            newDoctor.relativeAvoidThisDay = split[12].getIntListFromString(out fail);
             return newDoctor;
         }
 
