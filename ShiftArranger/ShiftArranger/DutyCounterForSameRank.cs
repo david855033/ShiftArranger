@@ -18,27 +18,45 @@ namespace ShiftArranger
                 workdayCount.Add(d, 0);
             }
         }
-        public void setHolidayCount(DoctorType w, int c)
+        public void setHolidayCount(DoctorType d, int c)
         {
-            if (c > holidayCount[w])
+            if (c > holidayCount[d])
             {
-                holidayCount[w] = c;
+                holidayCount[d] = c;
             }
         }
-        public void setWorkdayCount(DoctorType w, int c)
+        public void setWorkdayCount(DoctorType d, int c)
         {
-            if (c > workdayCount[w])
+            if (c > workdayCount[d])
             {
-                workdayCount[w] = c;
+                workdayCount[d] = c;
             }
         }
-        public int setHolidayCount(DoctorType w)
+
+        public int getExpectTotalDuty(DoctorType d)
         {
-            return holidayCount[w];
-        }
-        public int getWorkday(DoctorType w)
-        {
-            return workdayCount[w];
+            if (d == DoctorType.PGY)
+            {
+                return holidayCount[d] + workdayCount[d];
+            }
+            else
+            {
+                int R1Have = holidayCount[DoctorType.R1] + workdayCount[DoctorType.R1];
+                int R2Have = holidayCount[DoctorType.R2] + workdayCount[DoctorType.R2];
+                int R3Have = holidayCount[DoctorType.R3] + workdayCount[DoctorType.R3];
+                int R1ShouldHave = Math.Max(Math.Max(R1Have, R2Have + 1), R3Have + 2);
+                if (d == DoctorType.R1)
+                {
+                    return R1ShouldHave;
+                }
+                else if (d == DoctorType.R2)
+                {
+                    return R1ShouldHave - 1;
+                }
+                else {
+                    return R1ShouldHave - 2;
+                }
+            }
         }
     }
 }

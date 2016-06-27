@@ -138,6 +138,7 @@ namespace ShiftArranger
                 newDoctor.holidayDuty = d.holidayDuty;
                 newDoctor.arrangedHolidayDuty = 0;
                 newDoctor.arrangedNonHolidayDuty = 0;
+                newDoctor.arrangedWeekendDuty = 0;
                 newList.Add(newDoctor);
             }
             return newList;

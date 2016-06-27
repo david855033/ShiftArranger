@@ -149,7 +149,6 @@ namespace ShiftArranger
                     doctorInViewModel.relativeWantThisDay_Color = redBrush;
                     allPassed = false;
                 }
-
                 if (allPassed)
                 {
                     newDoctorList.Add(toAdd);
@@ -416,12 +415,17 @@ namespace ShiftArranger
             mainLogic.daysInThisMonths = viewModel.daysInThisMonth.getIntFromString(out fail);
             mainLogic.weekDayOfTheFirstDay = viewModel.firstWeekDayOfThisMonth.getIntFromString(out fail);
             mainLogic.Holidays = viewModel.additionalHolidays.getIntListFromString(out fail);
-            mainLogic.arrange();
-            viewModel.refreshDateList();
-            viewModel.refreshDoctorList();
+            int loop = Loop.Text.getIntFromString(out fail);
+            int times = Times.Text.getIntFromString(out fail);
+            if (!fail)
+            {
+                mainLogic.arrange(loop, times);
+                viewModel.refreshDateList();
+                viewModel.refreshDoctorList();
 
-            dateListView.ItemsSource = viewModel.dateList;
-            DoctorListView.ItemsSource = viewModel.doctorList;
+                dateListView.ItemsSource = viewModel.dateList;
+                DoctorListView.ItemsSource = viewModel.doctorList;
+            }
         }
 
         private void Window_Unloaded(object sender, System.ComponentModel.CancelEventArgs e)

@@ -300,7 +300,7 @@ namespace ShiftArranger
                         dutyDoctorInDay_Color[i] = lightGreenBrush;
                     if (i >= daysInMonth)
                         dutyDoctorInDay_Color[i] = blackBrush;
-                    if (dutyDoctorInDay[i] == highLight)
+                    if (dutyDoctorInDay[i].Substring(0,1) == highLight.Substring(0, 1))
                         dutyDoctorInDay_Color[i] = blueBrush;
                 }
             }

@@ -75,6 +75,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ArrangerOne.cs" />
     <Compile Include="DutyCounterForSameRank.cs" />
     <Compile Include="staticClass.cs" />
     <Compile Include="TotalDutyDayAnalyzer.cs" />
