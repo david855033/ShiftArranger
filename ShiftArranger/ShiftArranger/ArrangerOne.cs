@@ -133,7 +133,6 @@ namespace ShiftArranger
                         AvailableDoctorList.RemoveAll(x => doctorToBeRemoved.Contains(x));
                     }
 
-
                     //長幼有序運算
                     List<int> dutyShouldBeArrangeList = new List<int>();
                     var doctorListIsLeastArranged = new List<DoctorInformation>();
