@@ -32,7 +32,15 @@ namespace ShiftArranger
                 workdayCount[d] = c;
             }
         }
+        public int getMaxHolidayCount(DoctorType d)
+        {
+            return holidayCount[d];
+        }
 
+        public int getMaxWorkdayCount(DoctorType d)
+        {
+            return workdayCount[d];
+        }
         public int getExpectTotalDuty(DoctorType d)
         {
             if (d == DoctorType.PGY)

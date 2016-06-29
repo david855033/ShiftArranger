@@ -460,8 +460,8 @@ namespace ShiftArranger
                 NewWardShiftList.Add(newWardShift);
             }
             viewModel.wardShiftList = NewWardShiftList;
-            WardShiftListView.ItemsSource = viewModel.wardShiftList;
-            WardShiftListView.Items.Refresh();
+            //WardShiftListView.ItemsSource = viewModel.wardShiftList;
+            //WardShiftListView.Items.Refresh();
         }
 
         private void ClipBoard(object sender, RoutedEventArgs e)

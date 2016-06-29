@@ -29,6 +29,7 @@ namespace ShiftArranger
             int score = 0;
             int bias = Rand.getRand(daysInThisMonths);
             var rankDutyCounter = new DutyCounterForSameRank();
+
             //預先塞班
             for (int i = 0; i < daysInThisMonths; i++)
             {
@@ -394,7 +395,15 @@ namespace ShiftArranger
                 else if (c.Value > 2) { score += 10; }
             }
 
-
+            //值得班多 假日班要少
+            foreach (var d in doctorList.FindAll(x=>x.doctorType == DoctorType.PGY))
+            {
+                if (d.arrangedNonHolidayDuty == rankDutyCounter.getMaxWorkdayCount(d.doctorType) &&
+                   d.arrangedHolidayDuty == rankDutyCounter.getMaxHolidayCount(d.doctorType))
+                {
+                    score += 20;
+                }
+            }
 
             return new resultGroup() { score = score, doctorListResult = doctorList, dateListResult = dateList };
         }

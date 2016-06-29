@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShiftArranger"
         mc:Ignorable="d"
-        Title="ShiftArranger" Height="800" Width="1000" Top="0" Left="0" Closing="Window_Unloaded">
+        Title="ShiftArranger" Height="800" Width="1030" Top="0" Left="0" Closing="Window_Unloaded" ResizeMode="CanMinimize">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -16,7 +16,7 @@
         <DockPanel  Grid.Row="0">
             <StackPanel>
                 <TextBlock>Doctors</TextBlock>
-                <DataGrid x:Name="DoctorListView" Height="350" Width="1000"  AutoGenerateColumns="False"
+                <DataGrid x:Name="DoctorListView" Height="350" Width="980"  AutoGenerateColumns="False"
                           ScrollViewer.VerticalScrollBarVisibility="Auto" 
                           SelectionMode="Single" SelectionUnit="Cell" 
                           CanUserAddRows="False" CanUserSortColumns="False" CanUserDeleteRows="False"
@@ -116,7 +116,7 @@
 
         </DockPanel>
         <DockPanel Grid.Row="1">
-            <StackPanel VerticalAlignment="Center" Margin="20,0">
+            <StackPanel VerticalAlignment="Center" Margin="50,0,20,0">
                 <TextBlock TextAlignment="Center">醫師名單操作</TextBlock>
                 <Button Click="DoctorView_SaveChange" Margin="0,5" Width="100" Content="儲存更變"/>
                 <Button Click="DoctorView_AddDoctor" Margin="0,5" Width="100" Content="新增醫師"/>
@@ -127,7 +127,7 @@
                 <Button Margin="0,5" Click="SaveDoctorList" Width="100" Content="儲存醫師名單..."/>
                 <Button Margin="0,5" Click="LoadDoctorList" Width="100" Content="載入醫師名單..."/>
             </StackPanel>
-            <StackPanel Orientation="Vertical" Margin="15,15,0,15">
+            <StackPanel Orientation="Vertical" Margin="20,15,20,15">
                 <StackPanel Orientation="Horizontal">
                     <Border BorderBrush="Black" BorderThickness="2" Margin="3">
                         <TextBlock TextAlignment="Center" Width="100">設定本月日數</TextBlock>
@@ -183,26 +183,25 @@
                 <Button Margin="10" Click="Initialize_WorkDay">重置日曆(會清空所有排班)</Button>
 
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="150" Margin="5,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="150" Margin="20,0">
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Margin="10,10,0,10">Thread(多核心電腦用)：</TextBlock>
                         <TextBox Margin="0,10" Width="50" x:Name="Loop" Text="1"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="20,10,0,10">計算次數：</TextBlock>
-                        <TextBox Margin="0,10" Width="100" x:Name="Times" Text="2500"/>
+                        <TextBlock Margin="20,3,0,13">計算次數：</TextBlock>
+                        <TextBox Margin="0,3" Width="100" x:Name="Times" Text="2500"/>
                     </StackPanel>
+                    <Button Margin="3" Click="Arrange" Width="100" Height="25" Background="Aquamarine" FontWeight="Bold">求解</Button>
                 </StackPanel>
-                <Button Margin="10" Click="Arrange" Width="100" Height="50">求解</Button>
-                <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150">
-                    <Button Margin="0,10" Click="ClipBoard" Width="120" Height="50" Content="複製至剪貼簿"/>
-                    <Button Margin="0,10" Click="SaveDateList" Width="100" Content="儲存班表..."/>
-                    <Button Margin="0,10" Click="LoadDateList" Width="100" Content="載入班表..."/>
-                </StackPanel>
-
             </StackPanel>
-        
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150">
+                <TextBlock TextAlignment="Center">班表操作</TextBlock>
+                <Button Margin="0,10" Click="ClipBoard" Width="100" Height="30" Background="PaleGoldenrod" Content="複製至剪貼簿"/>
+                <Button Margin="0,10" Click="SaveDateList" Width="100" Content="儲存班表..."/>
+                <Button Margin="0,10" Click="LoadDateList" Width="100" Content="載入班表..."/>
+            </StackPanel>
         </DockPanel>
         <StackPanel Grid.Row="2">
             <DockPanel>
@@ -215,217 +214,217 @@
                           CellEditEnding="ListView_CellEditEnding">
                         <DataGrid.Columns>
                             <DataGridTextColumn Width="50" Header="Ward" Binding="{Binding ward}"/>
-                            <DataGridTextColumn  Width="30" Header="1" Binding="{Binding  dutyDoctorInDay[0]}">
+                            <DataGridTextColumn  Width="28" Header="1" Binding="{Binding  dutyDoctorInDay[0]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[0]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="2" Binding="{Binding  dutyDoctorInDay[1]}">
+                            <DataGridTextColumn  Width="28" Header="2" Binding="{Binding  dutyDoctorInDay[1]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[1]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="3" Binding="{Binding  dutyDoctorInDay[2]}">
+                            <DataGridTextColumn  Width="28" Header="3" Binding="{Binding  dutyDoctorInDay[2]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[2]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="4" Binding="{Binding  dutyDoctorInDay[3]}">
+                            <DataGridTextColumn  Width="28" Header="4" Binding="{Binding  dutyDoctorInDay[3]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[3]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="5" Binding="{Binding  dutyDoctorInDay[4]}">
+                            <DataGridTextColumn  Width="28" Header="5" Binding="{Binding  dutyDoctorInDay[4]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[4]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="6" Binding="{Binding  dutyDoctorInDay[5]}">
+                            <DataGridTextColumn  Width="28" Header="6" Binding="{Binding  dutyDoctorInDay[5]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[5]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="7" Binding="{Binding  dutyDoctorInDay[6]}">
+                            <DataGridTextColumn  Width="28" Header="7" Binding="{Binding  dutyDoctorInDay[6]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[6]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="8" Binding="{Binding  dutyDoctorInDay[7]}">
+                            <DataGridTextColumn  Width="28" Header="8" Binding="{Binding  dutyDoctorInDay[7]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[7]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="9" Binding="{Binding  dutyDoctorInDay[8]}">
+                            <DataGridTextColumn  Width="28" Header="9" Binding="{Binding  dutyDoctorInDay[8]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[8]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="10" Binding="{Binding  dutyDoctorInDay[9]}">
+                            <DataGridTextColumn  Width="28" Header="10" Binding="{Binding  dutyDoctorInDay[9]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[9]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="11" Binding="{Binding  dutyDoctorInDay[10]}">
+                            <DataGridTextColumn  Width="28" Header="11" Binding="{Binding  dutyDoctorInDay[10]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[10]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="12" Binding="{Binding  dutyDoctorInDay[11]}">
+                            <DataGridTextColumn  Width="28" Header="12" Binding="{Binding  dutyDoctorInDay[11]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[11]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="13" Binding="{Binding  dutyDoctorInDay[12]}">
+                            <DataGridTextColumn  Width="28" Header="13" Binding="{Binding  dutyDoctorInDay[12]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[12]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="14" Binding="{Binding  dutyDoctorInDay[13]}">
+                            <DataGridTextColumn  Width="28" Header="14" Binding="{Binding  dutyDoctorInDay[13]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[13]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="15" Binding="{Binding  dutyDoctorInDay[14]}">
+                            <DataGridTextColumn  Width="28" Header="15" Binding="{Binding  dutyDoctorInDay[14]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[14]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="16" Binding="{Binding  dutyDoctorInDay[15]}">
+                            <DataGridTextColumn  Width="28" Header="16" Binding="{Binding  dutyDoctorInDay[15]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[15]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="17" Binding="{Binding  dutyDoctorInDay[16]}">
+                            <DataGridTextColumn  Width="28" Header="17" Binding="{Binding  dutyDoctorInDay[16]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[16]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="18" Binding="{Binding  dutyDoctorInDay[17]}">
+                            <DataGridTextColumn  Width="28" Header="18" Binding="{Binding  dutyDoctorInDay[17]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[17]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="19" Binding="{Binding  dutyDoctorInDay[18]}">
+                            <DataGridTextColumn  Width="28" Header="19" Binding="{Binding  dutyDoctorInDay[18]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[18]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="20" Binding="{Binding  dutyDoctorInDay[19]}">
+                            <DataGridTextColumn  Width="28" Header="20" Binding="{Binding  dutyDoctorInDay[19]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[19]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="21" Binding="{Binding  dutyDoctorInDay[20]}">
+                            <DataGridTextColumn  Width="28" Header="21" Binding="{Binding  dutyDoctorInDay[20]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[20]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="22" Binding="{Binding  dutyDoctorInDay[21]}">
+                            <DataGridTextColumn  Width="28" Header="22" Binding="{Binding  dutyDoctorInDay[21]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[21]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="23" Binding="{Binding  dutyDoctorInDay[22]}">
+                            <DataGridTextColumn  Width="28" Header="23" Binding="{Binding  dutyDoctorInDay[22]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[22]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="24" Binding="{Binding  dutyDoctorInDay[23]}">
+                            <DataGridTextColumn  Width="28" Header="24" Binding="{Binding  dutyDoctorInDay[23]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[23]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="25" Binding="{Binding  dutyDoctorInDay[24]}">
+                            <DataGridTextColumn  Width="28" Header="25" Binding="{Binding  dutyDoctorInDay[24]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[24]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="26" Binding="{Binding  dutyDoctorInDay[25]}">
+                            <DataGridTextColumn  Width="28" Header="26" Binding="{Binding  dutyDoctorInDay[25]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[25]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="27" Binding="{Binding  dutyDoctorInDay[26]}">
+                            <DataGridTextColumn  Width="28" Header="27" Binding="{Binding  dutyDoctorInDay[26]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[26]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="28" Binding="{Binding  dutyDoctorInDay[27]}">
+                            <DataGridTextColumn  Width="28" Header="28" Binding="{Binding  dutyDoctorInDay[27]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[27]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="29" Binding="{Binding  dutyDoctorInDay[28]}">
+                            <DataGridTextColumn  Width="28" Header="29" Binding="{Binding  dutyDoctorInDay[28]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[28]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="30" Binding="{Binding  dutyDoctorInDay[29]}">
+                            <DataGridTextColumn  Width="28" Header="28" Binding="{Binding  dutyDoctorInDay[29]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[29]}" />
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn  Width="30" Header="31" Binding="{Binding  dutyDoctorInDay[30]}">
+                            <DataGridTextColumn  Width="28" Header="31" Binding="{Binding  dutyDoctorInDay[30]}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="{Binding dutyDoctorInDay_Color[30]}" />

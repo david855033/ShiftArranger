@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ShiftArranger.exe" size="69632">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ShiftArranger.exe" size="69120">
       <assemblyIdentity name="ShiftArranger" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>X8CYrYc1FqofVk7zTE8zNvdI9WLV+SeEpwaiOdQ/8MM=</dsig:DigestValue>
+        <dsig:DigestValue>+w63qLw0hHj/ObK7gDjZO0HwEKe77j1lhErboECr90g=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
