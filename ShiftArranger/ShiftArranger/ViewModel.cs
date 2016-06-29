@@ -23,10 +23,10 @@ namespace ShiftArranger
 
         static Brush whiteBrush = new SolidColorBrush(Colors.White);
         static Brush yellowBrush = new SolidColorBrush(Colors.Yellow);
-        static Brush blueBrush = new SolidColorBrush(Colors.LightBlue);
+        static Brush blueBrush = new SolidColorBrush(Colors.Pink);
         static Brush redBrush = new SolidColorBrush(Colors.Red);
         static Brush greenBrush = new SolidColorBrush(Colors.LawnGreen);
-        static Brush lightGreenBrush = new SolidColorBrush(Colors.YellowGreen);
+        static Brush lightGreenBrush = new SolidColorBrush(Colors.LightSeaGreen);
         static Brush blackBrush = new SolidColorBrush(Colors.Black);
 
         MainLogic mainLogic;
@@ -262,7 +262,7 @@ namespace ShiftArranger
             {
                 get
                 {
-                    if(index>=0)
+                    if (index >= 0)
                         return array[index];
                     return array[0];
                 }
@@ -300,7 +300,7 @@ namespace ShiftArranger
                         dutyDoctorInDay_Color[i] = lightGreenBrush;
                     if (i >= daysInMonth)
                         dutyDoctorInDay_Color[i] = blackBrush;
-                    if (dutyDoctorInDay[i].Substring(0,1) == highLight.Substring(0, 1))
+                    if (dutyDoctorInDay[i] != ""  && dutyDoctorInDay[i]?.Substring(0, 1) == highLight?.Substring(0, 1))
                         dutyDoctorInDay_Color[i] = blueBrush;
                 }
             }
@@ -437,7 +437,11 @@ namespace ShiftArranger
         public int workdayCount { get { return _daysInThisMonth - _additionalHolidays.Count; } }
         public int holidayDutyCount { get { return holidayCount * WardSets.allWards.Count(); } }
         public int workdayDutyCount { get { return workdayCount * WardSets.allWards.Count(); } }
-
+        public string display
+        {
+            get { return mainLogic.display; }
+            set { mainLogic.display = value; OnPropertyChanged(nameof(display)); }
+        }
         public class WardShiftView
         {
             public string ward { get; set; }

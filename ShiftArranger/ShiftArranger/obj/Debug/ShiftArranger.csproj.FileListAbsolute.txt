@@ -12,3 +12,7 @@ D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\Debug\ShiftArrang
 D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\Debug\ShiftArranger.csproj.GenerateResource.Cache
 D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\Debug\ShiftArranger.exe
 D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\Debug\ShiftArranger.pdb
+D:\文件\Github\ShiftArranger\ShiftArranger\ShiftArranger\bin\Debug\ShiftArranger.exe.manifest
+D:\文件\Github\ShiftArranger\ShiftArranger\ShiftArranger\bin\Debug\ShiftArranger.application
+D:\文件\Github\ShiftArranger\ShiftArranger\ShiftArranger\obj\Debug\ShiftArranger.exe.manifest
+D:\文件\Github\ShiftArranger\ShiftArranger\ShiftArranger\obj\Debug\ShiftArranger.application

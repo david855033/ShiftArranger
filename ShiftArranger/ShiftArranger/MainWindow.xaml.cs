@@ -309,6 +309,7 @@ namespace ShiftArranger
                 sw.WriteLine($"[daysIntheMonth]={viewModel.daysInThisMonth}");
                 sw.WriteLine($"[firstWeekDay]={viewModel.firstWeekDayOfThisMonth}");
                 sw.WriteLine($"[holiday]={viewModel.additionalHolidays}");
+                sw.WriteLine($"[display]={viewModel.display}");
             }
         }
         Microsoft.Win32.OpenFileDialog Date_LoadDialog = new Microsoft.Win32.OpenFileDialog();
@@ -342,6 +343,10 @@ namespace ShiftArranger
                     else if (line.Split('=')[0] == "[holiday]")
                     {
                         viewModel.additionalHolidays = line.Split('=')[1];
+                    }
+                    else if (line.Split('=')[0] == "[display]")
+                    {
+                        viewModel.display = line.Split('=')[1];
                     }
                     else
                     {
@@ -425,6 +430,7 @@ namespace ShiftArranger
 
                 dateListView.ItemsSource = viewModel.dateList;
                 DoctorListView.ItemsSource = viewModel.doctorList;
+                display.Text = viewModel.display;
             }
         }
 
@@ -458,8 +464,20 @@ namespace ShiftArranger
             WardShiftListView.Items.Refresh();
         }
 
-
-
-
+        private void ClipBoard(object sender, RoutedEventArgs e)
+        {
+            StringBuilder result = new StringBuilder();
+            foreach (var datelist in mainLogic.dateList)
+            {
+                StringBuilder line = new StringBuilder();
+                line.Append(datelist.wardType.ToString());
+                foreach (var d in datelist.dutyDoctor)
+                {
+                    line.Append("\t" + d);
+                }
+                result.AppendLine(line.ToString());
+            }
+            Clipboard.SetData(DataFormats.Text, result.ToString());
+        }
     }
 }

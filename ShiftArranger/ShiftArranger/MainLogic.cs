@@ -17,6 +17,7 @@ namespace ShiftArranger
         public IEnumerable<DateInformation> dateList = new List<DateInformation>();
         public IEnumerable<DoctorInformation> doctorList = new List<DoctorInformation>();
         public int daysInThisMonths, weekDayOfTheFirstDay;
+        public string display { get; set; }
         public IEnumerable<int> Holidays = new List<int>();
 
         public void initializedDoctors()
@@ -75,14 +76,18 @@ namespace ShiftArranger
             }
             if (finalResultPool.Count == 0)
             {
-                System.Windows.MessageBox.Show($"運算{times * loops}次 無可行解 耗時{Math.Round(DateTime.Now.Subtract(now).TotalSeconds, 1)}秒.");
+                var r = $"運算{times * loops}次 無可行解 耗時{Math.Round(DateTime.Now.Subtract(now).TotalSeconds, 1)}秒.";
+                System.Windows.MessageBox.Show(r);
+                display = $"[{DateTime.Now}]" + r;
             }
             else
             {
                 finalResultPool.Sort();
                 dateList = finalResultPool.First().dateListResult;
                 doctorList = finalResultPool.First().doctorListResult;
-                System.Windows.MessageBox.Show($"運算{count}次 共找出{finalResultPool.Count}組可行解 最佳解缺陷值 = {finalResultPool.First().score} 耗時{Math.Round(DateTime.Now.Subtract(now).TotalSeconds, 1)}秒.");
+                var r = $"運算{count}次 共找出{finalResultPool.Count}組可行解 最佳解缺陷值: {finalResultPool.First().score} 耗時{Math.Round(DateTime.Now.Subtract(now).TotalSeconds, 1)}秒.";
+                System.Windows.MessageBox.Show(r);
+                display = $"[{DateTime.Now}]"+r;
             }
             finalResultPool.Clear();
         }

@@ -12,3 +12,7 @@ D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftAr
 D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger.exe
 D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger.pdb
 D:\文件\GitHub\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger.csprojResolveAssemblyReference.cache
+D:\文件\Github\ShiftArranger\ShiftArranger\ShiftArranger\bin\x64\Debug\ShiftArranger.exe.manifest
+D:\文件\Github\ShiftArranger\ShiftArranger\ShiftArranger\bin\x64\Debug\ShiftArranger.application
+D:\文件\Github\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger.exe.manifest
+D:\文件\Github\ShiftArranger\ShiftArranger\ShiftArranger\obj\x64\Debug\ShiftArranger.application

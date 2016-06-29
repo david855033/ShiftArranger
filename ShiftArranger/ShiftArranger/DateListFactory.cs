@@ -13,7 +13,7 @@ namespace ShiftArranger
         IEnumerable<WardType> wardTypes;
         int daysInThisMonth;
         int firstWeekDayofThisMonth;
-        public DateListFactory(int daysInThisMonth,int firstWeekDayofThisMonth, IEnumerable<int> holidays, IEnumerable<WardType> wardTypes)
+        public DateListFactory(int daysInThisMonth, int firstWeekDayofThisMonth, IEnumerable<int> holidays, IEnumerable<WardType> wardTypes)
         {
             this.firstWeekDayofThisMonth = firstWeekDayofThisMonth;
             this.daysInThisMonth = daysInThisMonth;
@@ -26,7 +26,7 @@ namespace ShiftArranger
             foreach (var w in WardSets.allWards)
             {
                 var toAdd = new DateInformation();
-                for (int i = 0; i < daysInThisMonth; i++)
+                for (int i = 0; i < 31; i++)
                 {
                     toAdd.wardType = w;
                     DateType setDateTypeTo = DateType.Workday;
@@ -38,7 +38,7 @@ namespace ShiftArranger
                     {
                         setDateTypeTo = DateType.Weekend;
                     }
-                    for(int x = 0; x <toAdd.dutyDoctor.Length;x++)
+                    for (int x = 0; x < toAdd.dutyDoctor.Length; x++)
                     {
                         toAdd.dutyDoctor[x] = "";
                     }

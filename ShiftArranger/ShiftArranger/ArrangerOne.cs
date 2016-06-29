@@ -68,10 +68,10 @@ namespace ShiftArranger
                                 (dateType == DateType.Holiday ? (q.holidayDuty > q.arrangedHolidayDuty) :  //若為假日還有假日班可用
                                 (q.nonHolidayDuty > q.arrangedNonHolidayDuty))                             //若為平日還有平日班可用
                                 select q;
-                    var AvailableDoctorList = new List<DoctorInformation>(query);
                     var priorityDoctorList = new List<DoctorInformation>();
+                    var prioritySubOptimalDoctorList = new List<DoctorInformation>();
+                    var AvailableDoctorList = new List<DoctorInformation>(query);
                     var SubOptimalDoctorList = new List<DoctorInformation>();
-                    var VerySubOptimalDoctorList = new List<DoctorInformation>();
 
 
                     //排除絕對不要這天
@@ -133,32 +133,66 @@ namespace ShiftArranger
                         AvailableDoctorList.RemoveAll(x => doctorToBeRemoved.Contains(x));
                     }
 
-                    //長幼有序運算
+                    //不可兩個新手R1在CU
+                    if (currentDateList.wardType == WardType.NICU)
+                    {
+                        var dutyDoctorAtPICU = dateList.Find(x => x.wardType == WardType.PICU).dutyDoctor[j];
+                        if (dutyDoctorAtPICU.Length == 2 &&
+                            doctorList.Find(x => x.ID.Substring(0, 1) == dutyDoctorAtPICU.Substring(0, 1)).doctorType == DoctorType.R1)
+                        {
+                            AvailableDoctorList.RemoveAll(x => x.doctorType == DoctorType.R1 && x.ID.Length == 2);
+                        }
+                    }
+
+                    //長幼有序運算+ 空班多的優先
                     List<int> dutyShouldBeArrangeList = new List<int>();
                     var doctorListIsLeastArranged = new List<DoctorInformation>();
                     int maxDutyShouldBeArrange = 0;
+                    List<string> doctorFirstWord = new List<string>();
+                    Dictionary<string, int> DoctorFirstWordAndDutyTable = new Dictionary<string, int>();
                     foreach (var d in AvailableDoctorList)
                     {
-                        int dutyShouldBeArrange = rankDutyCounter.getExpectTotalDuty(d.doctorType)
-                            - (d.arrangedHolidayDuty + d.arrangedNonHolidayDuty);
+                        if (!DoctorFirstWordAndDutyTable.ContainsKey(d.ID.Substring(0, 1)))
+                            DoctorFirstWordAndDutyTable.Add(d.ID.Substring(0, 1), 0);
+                    }
+                    foreach (var d in DoctorFirstWordAndDutyTable.Keys.ToList())
+                    {
+                        var matchDoctorQuery = from q in AvailableDoctorList
+                                               where q.ID.Substring(0, 1) == d
+                                               select q;
+                        int arrangedHolidayDuty = 0, arrangedNonHolidayDuty = 0; var doctorType = new DoctorType();
+                        foreach (var sameDoctor in matchDoctorQuery)
+                        {
+                            arrangedHolidayDuty += sameDoctor.arrangedHolidayDuty;
+                            arrangedNonHolidayDuty += sameDoctor.arrangedNonHolidayDuty;
+                            doctorType = sameDoctor.doctorType;
+                        }
+                        DoctorFirstWordAndDutyTable[d] = arrangedHolidayDuty + arrangedNonHolidayDuty;
+                        int dutyShouldBeArrange = rankDutyCounter.getExpectTotalDuty(doctorType)
+                            - (DoctorFirstWordAndDutyTable[d]);
                         maxDutyShouldBeArrange = Math.Max(maxDutyShouldBeArrange, dutyShouldBeArrange);
                     }
-                    foreach (var d in AvailableDoctorList)
+                    foreach (var d in DoctorFirstWordAndDutyTable.Keys.ToList())
                     {
-                        int dutyShouldBeArrange = rankDutyCounter.getExpectTotalDuty(d.doctorType)
-                            - (d.arrangedHolidayDuty + d.arrangedNonHolidayDuty);
-                        if (dutyShouldBeArrange == maxDutyShouldBeArrange)
+                        int dutyShouldBeArrange = rankDutyCounter.getExpectTotalDuty(AvailableDoctorList.Find(x => x.ID.StartsWith(d)).doctorType)
+                            - (DoctorFirstWordAndDutyTable[d]);
+                        if (dutyShouldBeArrange >= maxDutyShouldBeArrange - 1)
                         {
-                            priorityDoctorList.Add(d);
+                            priorityDoctorList.Add(AvailableDoctorList.Find(x => x.ID.Substring(0, 1) == d));
                         }
                     }
                     AvailableDoctorList.RemoveAll(x => priorityDoctorList.Contains(x));
-
 
                     //不符合主要病房
                     var doctorListNotMainWard = AvailableDoctorList.FindAll(x => x.mainWard != ward);
                     SubOptimalDoctorList.AddRange(doctorListNotMainWard);
                     AvailableDoctorList.RemoveAll(x => doctorListNotMainWard.Contains(x));
+                    if (priorityDoctorList.Count > 1)
+                    {
+                        var doctorListToExcludeInPriority = priorityDoctorList.FindAll(x => x.mainWard != ward);
+                        prioritySubOptimalDoctorList.AddRange(doctorListToExcludeInPriority);
+                        priorityDoctorList.RemoveAll(x => doctorListToExcludeInPriority.Contains(x));
+                    }
 
                     //QOD一次
                     var doctorListQoD = AvailableDoctorList.FindAll(x =>
@@ -166,15 +200,26 @@ namespace ShiftArranger
                     (j < daysInThisMonths - 2 && DateInformation.isDoctorInThisDay(j + 2, x.ID, dateList) == true));
                     SubOptimalDoctorList.AddRange(doctorListQoD);
                     AvailableDoctorList.RemoveAll(x => doctorListQoD.Contains(x));
+                    if (priorityDoctorList.Count > 1)
+                    {
+                        var doctorListToExcludeInPriority = priorityDoctorList.FindAll(x =>
+                        (j >= 2 && DateInformation.isDoctorInThisDay(j - 2, x.ID, dateList) == true) ||
+                        (j < daysInThisMonths - 2 && DateInformation.isDoctorInThisDay(j + 2, x.ID, dateList) == true));
+                        prioritySubOptimalDoctorList.AddRange(doctorListToExcludeInPriority);
+                        priorityDoctorList.RemoveAll(x => doctorListToExcludeInPriority.Contains(x));
+                    }
+
 
                     //相對不喜歡這天
                     var doctorListRelativeAvoid = AvailableDoctorList.FindAll(x => x.relativeAvoidThisDay.Contains(j + 1));
                     SubOptimalDoctorList.AddRange(doctorListRelativeAvoid);
                     AvailableDoctorList.RemoveAll(x => doctorListRelativeAvoid.Contains(x));
-
-                    //W5 count
-
-                    //不能兩個R1
+                    if (priorityDoctorList.Count > 1)
+                    {
+                        var doctorListToExcludeInPriority = priorityDoctorList.FindAll(x => x.relativeAvoidThisDay.Contains(j + 1));
+                        prioritySubOptimalDoctorList.AddRange(doctorListToExcludeInPriority);
+                        priorityDoctorList.RemoveAll(x => doctorListToExcludeInPriority.Contains(x));
+                    }
 
                     //填入
                     if (priorityDoctorList.Count > 0)
@@ -194,6 +239,25 @@ namespace ShiftArranger
                             DoctorToBeAssign.arrangedNonHolidayDuty++;
                             rankDutyCounter.setWorkdayCount(DoctorToBeAssign.doctorType, DoctorToBeAssign.arrangedNonHolidayDuty);
                         }
+                    }
+                    else if (prioritySubOptimalDoctorList.Count > 0)
+                    {
+                        DoctorInformation DoctorToBeAssign = prioritySubOptimalDoctorList.getRandomElement<DoctorInformation>();
+                        currentDateList.dutyDoctor[j] = DoctorToBeAssign.ID;
+
+                        if (dateType == DateType.Holiday)
+                        {
+                            DoctorToBeAssign.arrangedHolidayDuty++;
+                            rankDutyCounter.setHolidayCount(DoctorToBeAssign.doctorType, DoctorToBeAssign.arrangedHolidayDuty);
+                        }
+                        else
+                        {
+                            if (dateType == DateType.Weekend)
+                                DoctorToBeAssign.arrangedWeekendDuty++;
+                            DoctorToBeAssign.arrangedNonHolidayDuty++;
+                            rankDutyCounter.setWorkdayCount(DoctorToBeAssign.doctorType, DoctorToBeAssign.arrangedNonHolidayDuty);
+                        }
+                        score++;
                     }
                     else if (AvailableDoctorList.Count > 0)
                     {
@@ -232,25 +296,6 @@ namespace ShiftArranger
                         }
                         score++;
                     }
-                    else if (VerySubOptimalDoctorList.Count > 0)
-                    {
-                        DoctorInformation DoctorToBeAssign = VerySubOptimalDoctorList.getRandomElement<DoctorInformation>();
-                        currentDateList.dutyDoctor[j] = DoctorToBeAssign.ID;
-
-                        if (dateType == DateType.Holiday)
-                        {
-                            DoctorToBeAssign.arrangedHolidayDuty++;
-                            rankDutyCounter.setHolidayCount(DoctorToBeAssign.doctorType, DoctorToBeAssign.arrangedHolidayDuty);
-                        }
-                        else
-                        {
-                            if (dateType == DateType.Weekend)
-                                DoctorToBeAssign.arrangedWeekendDuty++;
-                            DoctorToBeAssign.arrangedNonHolidayDuty++;
-                            rankDutyCounter.setWorkdayCount(DoctorToBeAssign.doctorType, DoctorToBeAssign.arrangedNonHolidayDuty);
-                        }
-                        score += 3;
-                    }
                     else
                     {
                         return null;
@@ -258,7 +303,7 @@ namespace ShiftArranger
                 }
             }
 
-            //結尾計算
+            //結尾計算 同階級要公平
             MainLogic.CountActualDutyDay(doctorList, dateList, daysInThisMonths);
             Dictionary<DoctorType, int> RankDutyDayTableMax = new Dictionary<DoctorType, int>();
             Dictionary<DoctorType, int> RankDutyDayTableMin = new Dictionary<DoctorType, int>();
@@ -266,25 +311,91 @@ namespace ShiftArranger
             {
                 var query = from q in doctorList
                             where q.doctorType == doctorType
-                            select q;
+                            select q.ID.Substring(0,1);
                 int maxTotalDutyDay = 0;
                 int minTotalDutyDay = 100;
-                foreach (var d in query)
+                foreach (var s in query)
                 {
-                    if (d.nonHolidayDuty + d.holidayDuty < 5) continue;
-                    int TotalDutyDay = d.arrangedHolidayDuty + d.arrangedNonHolidayDuty;
+                    int TotalDutyDay = (from q in doctorList where q.ID.Substring(0, 1) == s select q.arrangedHolidayDuty).Sum() +
+                        (from q in doctorList where q.ID.Substring(0, 1) == s select q.arrangedNonHolidayDuty).Sum();
                     maxTotalDutyDay = Math.Max(TotalDutyDay, maxTotalDutyDay);
                     minTotalDutyDay = Math.Min(TotalDutyDay, minTotalDutyDay);
                 }
                 RankDutyDayTableMax.Add(doctorType, maxTotalDutyDay);
                 RankDutyDayTableMin.Add(doctorType, minTotalDutyDay);
-                if (maxTotalDutyDay - minTotalDutyDay > 1)
+                if (maxTotalDutyDay - minTotalDutyDay == 1)
                 {
-                    score += 30;
+                    score += 10;
+                }else if (maxTotalDutyDay - minTotalDutyDay == 2)
+                {
+                    score += 50;
+                }
+                else if (maxTotalDutyDay - minTotalDutyDay > 2)
+                {
+                    score += 100;
                 }
             }
-            if (RankDutyDayTableMin[DoctorType.R3] > RankDutyDayTableMax[DoctorType.R2]) score += 30;
-            if (RankDutyDayTableMin[DoctorType.R2] > RankDutyDayTableMax[DoctorType.R1]) score += 30;
+            if (RankDutyDayTableMax[DoctorType.R3] > RankDutyDayTableMin[DoctorType.R2]) score += 50;
+            if (RankDutyDayTableMax[DoctorType.R2] - RankDutyDayTableMin[DoctorType.R3] > 1) score += 50;
+
+            if (RankDutyDayTableMax[DoctorType.R2] > RankDutyDayTableMin[DoctorType.R1]) score += 50;
+            if (RankDutyDayTableMax[DoctorType.R1] - RankDutyDayTableMin[DoctorType.R2] > 1) score += 50;
+
+            bool AllR3Equal = true; int Duty = 0;
+            foreach (var d in doctorList.Where(x => x.doctorType == DoctorType.R3))
+            {
+                int newDuty = (from q in doctorList
+                               where q.ID.Substring(0, 1) == d.ID.Substring(0, 1)
+                               select q.holidayDuty).Sum() +
+                       (from q in doctorList
+                        where q.ID.Substring(0, 1) == d.ID.Substring(0, 1)
+                        select q.nonHolidayDuty).Sum();
+                if (Duty == 0) { Duty = newDuty; }
+                else if (Duty != newDuty) { AllR3Equal = false; break; }
+            }
+            if (!AllR3Equal) score += 40;
+
+            bool AllR2Equal = true; Duty = 0;
+            foreach (var d in doctorList.Where(x => x.doctorType == DoctorType.R2))
+            {
+                int newDuty = (from q in doctorList
+                               where q.ID.Substring(0, 1) == d.ID.Substring(0, 1)
+                               select q.arrangedHolidayDuty).Sum() +
+                       (from q in doctorList
+                        where q.ID.Substring(0, 1) == d.ID.Substring(0, 1)
+                        select q.arrangedNonHolidayDuty).Sum();
+                if (Duty == 0) { Duty = newDuty; }
+                else if (Duty != newDuty) { AllR2Equal = false; break; }
+            }
+            if (!AllR2Equal) score += 25;
+
+            //W5
+            Dictionary<string, int> W5Count = new Dictionary<string, int>();
+            foreach (var wardDate in dateList)
+            {
+                for (int i = 0; i < daysInThisMonths; i++)
+                {
+                    if (wardDate.dateType[i] == DateType.Weekend)
+                    {
+                        if (W5Count.ContainsKey(wardDate.dutyDoctor[i].Substring(0, 1)))
+                        {
+                            W5Count[wardDate.dutyDoctor[i].Substring(0, 1)]++;
+                        }
+                        else
+                        {
+                            W5Count.Add(wardDate.dutyDoctor[i].Substring(0, 1), 1);
+                        }
+                    }
+                }
+            }
+            foreach (var c in W5Count)
+            {
+                if (c.Value > 1) { score += 1; }
+                else if (c.Value > 2) { score += 10; }
+            }
+
+
+
             return new resultGroup() { score = score, doctorListResult = doctorList, dateListResult = dateList };
         }
 
